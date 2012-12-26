@@ -1,0 +1,32 @@
+#set($nav='schema')
+
+<div>
+<a href="/hwi/schema">Schema</a>
+/ 
+<h1>$db.getName()</h1>
+<hr>
+</div>
+
+<dl class="dl-horizontal">
+<dt>Name</dt>
+<dd>$db.getName()</dd> 
+<dt>Description</dt>
+<dd>#alt($db.getDescription() '--')</dd>
+</dl>
+
+<hr>
+
+<table class="table table-bordered table-striped">
+	<thead>
+        <tr>
+            <th>Table</th>
+        </tr>
+    </thead>
+    <tbody>
+        #foreach ($table in $tables)
+		<tr>
+        <td><a href="/hwi/schema/$db.getName()/$table">$table</a></td>
+        </tr>
+		#end
+    </tbody>
+</table>

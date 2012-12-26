@@ -1,0 +1,21 @@
+#set($nav='query.list')
+
+<div>
+<a href="/hwi/queries/$query.getId()">$query.getName()</a>
+/
+<h2>Result</h2>
+</div>
+
+<hr/>
+
+<dl class="dl-horizontal">
+<dt>Location</dt>
+<dd>$query.getResultLocation()</dd>
+<dt>DownLoad</dt>
+<dd><a href="/hwi/queries/$query.getId()/result?raw=true"><i class="icon-download-alt"></i> Merged</a></dd>
+</dl>
+
+<hr/>
+
+
+#foreach($r in $partialResult)<code>$r</code><br/>#end

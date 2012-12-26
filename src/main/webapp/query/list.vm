@@ -1,0 +1,72 @@
+#set($nav='query.list')
+
+#macro (pagination)
+<div class="pagination">
+    <ul>
+        <li><span>$pagination.getTotal()</span></li>
+		#set($pages=$pagination.getPages()+1)
+        #foreach( $page in [1..$pages] )
+        <li class="#if($page==$pagination.getPage())active#end"><a href="?page=$page">$page</a></li>
+        #end
+    </ul>
+</div>
+#end
+
+
+<h2>Queries</h2>
+<hr>
+	
+<div class="table-pages">
+	
+#pagination
+
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Name</th>
+            <th>Query</th>
+            <th>Status</th>
+            <th>Result</th>
+        </tr>
+    </thead>
+    <tbody>
+        #foreach($query in $pagination.getItems())
+        <tr>
+            <td>$query.getId()</td>
+            <td><a href="/hwi/queries/$query.getId()">$query.getName()</a></td>
+            <td>
+                #if($query.getQuery().length() > 30)
+                #set($shortQuery=$query.getQuery().substring(0,30))
+                #else
+                #set($shortQuery=$query.getQuery())
+                #end
+                <code class="hide">$query.getQuery()</code>
+                <code class="short">$shortQuery</code>
+            </td>
+            <td><span class="label #status_class($query.getStatus())">$query.getStatus()</span></td>
+            <td>
+                #if ($query.getStatus() == "FINISHED")
+                <a class="btn btn-small btn-info" href="/hwi/queries/$query.getId()/result">View Result</a>
+                #end
+
+                $!{query.getErrorMsg()}
+            </td>
+        </tr>
+        #end
+    </tbody>
+</table>
+
+#if($pagination.getItems().size() > 5)
+#pagination
+#end
+
+</div>
+
+<script>
+    $(function(){
+        $('code.short').tooltip({title:function(){
+                return $(this).siblings('code.hide').text()
+        }})
+    })
+</script>

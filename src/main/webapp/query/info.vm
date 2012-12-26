@@ -1,0 +1,65 @@
+#set($nav='query.list')
+
+<h2>$query.getName()</h2>
+<hr>
+	
+<h3>Status</h3>
+<hr>
+<dl class="dl-horizontal">
+    <dt>Status</dt>
+    <dd><span class="label #status_class($query.getStatus())">$query.getStatus()</span></dd>
+    <dt>JobId</dt>
+    <dd>
+        #if($jobInfos)
+        #foreach($jobInfo in $jobInfos)
+        <a href="$jobInfo.get("url")" target="_blank">$jobInfo.get("id")</a>
+        <br/>
+        #end
+        #else
+        --
+        #end
+    </dd>
+</dl>
+<hr>
+<h3>Basic</h3>
+<hr>
+<dl class="dl-horizontal">
+    <dt>Query</dt>
+    <dd>
+        <pre><code>#alt($query.getQuery() "--")</code></pre>
+    </dd>
+    <dt>Callback</dt>
+    <dd>#alt($query.getCallback() "--")</dd>
+    <dt>Result location</dt>
+    <dd>
+        #if ($query.getStatus() == "FINISHED")
+        $query.getResultLocation()
+        <a class="btn btn-small btn-info" href="/hwi/queries/$query.getId()/result" >View Result</a>
+        #else 
+        --
+        #end
+    </dd>
+    <dt>Error message</dt>
+    <dd>#alt($query.getErrorMsg() "--")</dd>
+    <dt>Error code</dt>
+    <dd>#alt($query.getErrorCode() "--")</dd>
+    <dt>Created</dt>
+    <dd>#alt($query.getCreated() "--")</dd>
+    <dt>Updated</dt>
+    <dd>#alt($query.getUpdated() "--")</dd>
+</dl>
+<hr>
+<h3>Stats</h3>
+<hr>
+<dl class="dl-horizontal">
+    <dt>Cpu Time</dt>
+    <dd>#alt($cpuTime "--")</dd>
+    <dt>Total Time</dt>
+    <dd>#alt($totalTime "--")</dd>
+    #if($savedTime)
+    <dt>Saved Time</dt>
+    <dd>
+        <span class="badge badge-warning">$savedTime</span>
+    </dd>
+    #end
+</dl>

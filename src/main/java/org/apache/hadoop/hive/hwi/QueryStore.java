@@ -169,30 +169,19 @@ public class QueryStore {
   }
 
 
-  public Long getAllQueryCount() {
-    Query query = pm.newQuery(MQuery.class);
-    query.setResult("COUNT(id)");
-    query.setUnique(true);
-    return (Long) query.execute();
-  }
-
-
   /**
-   * get all queries by page and pageSize
+   * paginate by page and pageSize
    *
    * @param page
    * @param pageSize
    * @return
    */
-  @SuppressWarnings("unchecked")
-  public List<MQuery> getAllQueries(int page, int pageSize) {
-    int offset = (page - 1) * pageSize;
+  public Pagination<MQuery> paginate(int page, int pageSize) {
     Query query = pm.newQuery(MQuery.class);
     query.setOrdering("id DESC");
-    query.setRange(offset, offset + pageSize);
-    return (List<MQuery>) query.execute();
+    return new Pagination<MQuery>(query, page, pageSize);
   }
-
+  
   /**
    *
    * @param queryId

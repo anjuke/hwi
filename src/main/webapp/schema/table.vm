@@ -1,0 +1,159 @@
+#set($nav='schema')
+
+<div>
+<a href="/hwi/schema">Schema</a> 
+/ 
+<a href="/hwi/schema/$t.getDbName()">$t.getDbName()</a>
+/
+<h1>$t.getTableName()</h1>
+</div>
+
+<hr>
+
+#set($sd = $t.getSd())
+
+<dl class="dl-horizontal">
+    <dt>ColsSize</dt>
+    <dd>$sd.getColsSize()</dd>
+    <dt>Input Format</dt>
+    <dd>$sd.getInputFormat()</dd>
+    <dt>Output Format</dt>
+    <dd>$sd.getOutputFormat()</dd>
+    <dt>Is Compressed?</dt>
+    <dd>$sd.isCompressed()</dd>
+    <dt>Location</dt>
+    <dd>$sd.getLocation()</dd>
+    <dt>Number Of Buckets</dt>
+    <dd>$sd.getNumBuckets()</dd>
+</dl>
+
+<hr>
+<h2>Field Schema</h2>
+<hr>
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Type</th>
+            <th>Comment</th>
+        </tr>
+    </thead>
+    <tbody>
+    #foreach ($fs in $sd.getCols())
+    <tr>
+        <td>$fs.getName()</td>
+        <td>$fs.getType()</td>
+        <td>#alt($fs.getComment() '--')</td>
+    </tr>
+    #end
+    </tbody>
+</table>
+
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Bucket Columns</th>
+        </tr>
+    </thead>
+    <tbody>
+    #foreach ($col in $sd.getBucketCols())
+    <tr>
+        <td>$col</td>
+    </tr>
+    #end
+    </tbody>
+</table>
+
+<hr>
+<h2>Sort Columns</h2>
+<hr>
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Column</th>
+            <th>Order</th>
+        </tr>
+    </thead>
+    <tbody>
+    #foreach ($o in $sd.getSortCols())
+    <tr>
+        <td>$o.getCol()</td>
+        <td>$o.getOrder()</td>
+    </tr>
+    #end
+    </tbody>
+</table>
+
+<hr>
+<h2>Parameters</h2>
+<hr>
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Value</th>
+        </tr>
+    </thead>
+    <tbody>
+    #foreach ($key in $sd.getParameters().keySet())
+    <tr>
+        <td>$key</td>
+        <td>$sd.getParameters().get($key)</td>
+    </tr>
+    #end
+    </tbody>
+</table>
+
+<hr>
+<h2>SerDe Info</h2>
+<hr>
+
+#set($si = $sd.getSerdeInfo())
+
+<dl class="dl-horizontal">
+    <dt>Name</dt>
+    <dd>#alt(${si.getName()} '--')</dd>
+    <dt>Lib</dt>
+    <dd>$si.getSerializationLib()</dd>
+</dl>
+
+<hr>
+
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>value</th>
+        </tr>
+    </thead>
+    <tbody>
+    #foreach ($key in $si.getParameters().keySet())
+    <tr>
+        <td>$key</td>
+        <td>$si.getParameters().get($key)</td>
+    </tr>
+    #end
+    </tbody>
+</table>
+
+<hr>
+<h2>Partition Information</h2>
+<hr>
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Type</th>
+            <th>Comment</th>
+        </tr>
+    </thead>
+    <tbody>
+    #foreach ($fs in $t.getPartitionKeys())
+    <tr>
+        <td>$fs.getName()</td>
+        <td>$fs.getType()</td>
+        <td>$fs.getComment()</td>
+    </tr>
+    #end
+    </tbody>
+</table>
