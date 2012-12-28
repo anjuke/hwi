@@ -10,8 +10,8 @@ import org.apache.commons.logging.LogFactory;
 import com.sun.jersey.api.view.Viewable;
 
 @Path("/diagnostics")
-public class Diagnostics extends Base {
-	protected static final Log l4j = LogFactory.getLog(Diagnostics.class.getName());
+public class RDiagnostics extends RBase {
+	protected static final Log l4j = LogFactory.getLog(RDiagnostics.class.getName());
 
 	@GET
 	@Produces("text/html")

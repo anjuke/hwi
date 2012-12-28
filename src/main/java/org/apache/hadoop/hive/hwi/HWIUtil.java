@@ -42,6 +42,9 @@ public class HWIUtil {
 				+ "/jobdetails.jsp?jobid=" + jobid + "&refresh=30";
 	}
 
+	/*
+	 * incorrect, datanode can't be random
+	 * */
 	public static String getDataNodeURL(String path) {
 		Configuration conf = new Configuration();
 		conf.addResource("hdfs-default.xml");
@@ -79,7 +82,7 @@ public class HWIUtil {
 		}
 
 		try {
-			HiveHistoryViewer hv = new HiveHistoryViewer(historyFile);
+			HiveHistoryViewer hv = new HWIHiveHistoryViewer(historyFile);
 			return hv;
 		} catch (Exception e) {
 			e.printStackTrace();

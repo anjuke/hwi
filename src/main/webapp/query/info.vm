@@ -1,25 +1,36 @@
 #set($nav='query.list')
 
-<h2>$query.getName()</h2>
+<div>
+<a href="/hwi/queries">Quries</a>
+/
+<h2>
+    $query.getName()
+    #if ( !$query.getCrontabId() && $query.getStatus() == "FINISHED" )
+        <a class="pull-right" href="/hwi/crontabs/create?queryId=$query.getId()" title="Crontab It !">
+            <i class="icon-time"></i>
+        </a>
+    #elseif ( $query.getCrontabId() )
+        <a class="pull-right" href="/hwi/crontabs/$query.getCrontabId()" title="Crontab">
+            <i class="icon-time"></i>
+        </a>
+    #end
+</h2>
+</div>
 <hr>
-	
-<h3>Status</h3>
-<hr>
+    
 <dl class="dl-horizontal">
-    <dt>Status</dt>
-    <dd><span class="label #status_class($query.getStatus())">$query.getStatus()</span></dd>
-    <dt>JobId</dt>
+    <dt><span class="label #query_status($query.getStatus())">$query.getStatus()</span></dt>
     <dd>
         #if($jobInfos)
-        #foreach($jobInfo in $jobInfos)
-        <a href="$jobInfo.get("url")" target="_blank">$jobInfo.get("id")</a>
-        <br/>
-        #end
-        #else
-        --
+        <ul class="unstyled">
+            #foreach($jobInfo in $jobInfos)
+            <li><a href="$jobInfo.get("url")" target="_blank">$jobInfo.get("id")</a></li>
+            #end
+        </ul>
         #end
     </dd>
 </dl>
+
 <hr>
 <h3>Basic</h3>
 <hr>
@@ -44,9 +55,9 @@
     <dt>Error code</dt>
     <dd>#alt($query.getErrorCode() "--")</dd>
     <dt>Created</dt>
-    <dd>#alt($query.getCreated() "--")</dd>
+    <dd>#alt($createdTime "--")</dd>
     <dt>Updated</dt>
-    <dd>#alt($query.getUpdated() "--")</dd>
+    <dd>#alt($updatedTime "--")</dd>
 </dl>
 <hr>
 <h3>Stats</h3>

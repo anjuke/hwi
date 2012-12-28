@@ -5,20 +5,30 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.util.Calendar;
+import java.util.HashMap;
 import java.util.Properties;
+
+import javax.jdo.Query;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hive.conf.HiveConf;
+import org.apache.hadoop.hive.hwi.model.MCrontab;
+import org.apache.hadoop.hive.hwi.model.MQuery;
+import org.apache.hadoop.hive.hwi.model.Pagination;
+import org.apache.hadoop.hive.hwi.query.QueryCron;
+import org.apache.hadoop.hive.hwi.query.QueryManager;
+import org.apache.hadoop.hive.hwi.query.QueryStore;
 import org.apache.hadoop.hive.ql.session.SessionState;
 
 public class TestEverything {
 
 	public static void testHistoryFile() throws IOException {
-		String s = "1\r2\n3";
-		System.out.println(s.replace('\r', ' ').replace('\n', ' '));
+		HWIUtil.getHiveHistoryViewer("/tmp/hadoop/hive_job_log_hadoop_201212280953_1889961092.txt");
 	}
 
 	public static String readFile(String path) throws IOException {
+		@SuppressWarnings("resource")
 		BufferedReader br = new BufferedReader(new FileReader(path));
 		StringBuffer str = new StringBuffer();
 		String line = br.readLine();
@@ -62,7 +72,37 @@ public class TestEverything {
 		System.out.println(line);
 	}
 	
+	public static void testQueryCron() throws InterruptedException{
+		QueryManager.getInstance();
+		MCrontab ct = new MCrontab("test-query", "select * from test", "", "*/10 * * * * ?", "hadoop");
+		QueryStore.getInstance().insertCrontab(ct);
+		QueryCron.getInstance().schedule(ct);
+		Thread.sleep(30000);
+		QueryCron.getInstance().shutdown();
+		QueryManager.getInstance().shutdown();
+	}
+	
+	public static void testCalendar(){
+		System.out.println(Calendar.getInstance().get(Calendar.YEAR));
+	}
+	
+	public static void testInt(){
+		System.out.println(new Integer(10).toString());
+	}
+	
+	public static void testQuery(){
+		QueryStore qs = QueryStore.getInstance();
+		Query query = qs.getPM().newQuery(MQuery.class);
+		query.setOrdering("id DESC");
+		HashMap<String, Object> map = new HashMap<String, Object>();
+		map.put("crontabId", 3);
+		query.setResult("COUNT(id)");
+		query.executeWithMap(null);
+		//Pagination<MQuery> pagination = qs.paginate(query, map, 1, 2);
+		//System.out.println(pagination.getTotal());
+	}
+	
 	public static void main(String[] args) throws Exception {
-		testGetDataNodeURL();
+		testQuery();
 	}
 }

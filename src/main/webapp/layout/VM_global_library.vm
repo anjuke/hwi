@@ -1,18 +1,15 @@
 #macro(alt $a $b)#if($a)$a#{else}$b#end#end
-
-#macro(msg $m $t)
-#if($m)
-<div class="alert alert-#alt($t 'error')">
-<button type="button" class="close" data-dismiss="alert">&times;</button>
-$m
-</div>
-#end
-#end
 		
-#macro(status_class $status)
+#macro(query_status $status)
 #set($map = {
 	"INITED": "", 
 	"FINISHED": "label-success", 
 	"FAILED": "label-important", 
 	"SYNTAXERROR": "label-warning", 
 	"RUNNING": "label-info"})$map["$status"]#end
+
+#macro(crontab_status $status)
+#set($map = {
+	"RUNNING": "label-success", 
+	"PAUSED": "label-warning",
+	"DELETED": "label-important"})$map["$status"]#end

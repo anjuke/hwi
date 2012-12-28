@@ -18,11 +18,12 @@
 
 package org.apache.hadoop.hive.hwi;
 
-import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.hadoop.hive.hwi.query.QueryCron;
+import org.apache.hadoop.hive.hwi.query.QueryManager;
 
 /**
  * After getting a contextInitialized event this component starts an instance of
@@ -43,16 +44,11 @@ public class HWIContextListener implements javax.servlet.ServletContextListener 
    *          An event fired by the servlet context on startup
    */
   public void contextInitialized(ServletContextEvent sce) {
-    ServletContext sc = sce.getServletContext();
+    
+    QueryManager.getInstance().start();
+    
+    //QueryCron.getInstance().start();
 
-    QueryManager qm = new QueryManager();
-    l4j.debug("QueryManager created.");
-    Thread t = new Thread(qm);
-    t.start();
-    l4j.debug("QueryManager thread started.");
-    sc.setAttribute("qm", qm);
-
-    l4j.debug("QueryManager placed in application context.");
   }
 
   /**
@@ -64,15 +60,10 @@ public class HWIContextListener implements javax.servlet.ServletContextListener 
    *          An event fired by the servlet context on context shutdown
    */
   public void contextDestroyed(ServletContextEvent sce) {
-    ServletContext sc = sce.getServletContext();
-    QueryManager qm = (QueryManager) sc.getAttribute("qm");
-
-    if (qm == null) {
-      l4j.error("QueryManager was not found in context");
-    } else {
-      l4j.error("QueryManager goOn set to false. Shutting down.");
-      qm.setGoOn(false);
-    }
+    
+    QueryManager.getInstance().shutdown();
+    
+    QueryCron.getInstance().shutdown();
 
   }
 }

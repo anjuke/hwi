@@ -1,19 +1,22 @@
-package org.apache.hadoop.hive.hwi;
+package org.apache.hadoop.hive.hwi.model;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.jdo.Query;
 
 public class Pagination<T> {
 
 	private final Query query;
+	private final Map<String, Object> map;
 	private final int page;
 	private final int pageSize;
 	private Long total;
 	private List<T> items;
 	
-	public Pagination(Query query, int page, int pageSize){
+	public Pagination(Query query, Map<String, Object> map, int page, int pageSize){
 		this.query = query;
+		this.map = map;
 		this.page = page;
 		this.pageSize = pageSize;
 	}
@@ -22,6 +25,10 @@ public class Pagination<T> {
 		return query;
 	}
 	
+	public Map<String, Object> getMap() {
+		return map;
+	}
+
 	public int getPage(){
 		return page;
 	}
@@ -34,7 +41,7 @@ public class Pagination<T> {
 		if(total == null){
 			Query newQuery = query.getPersistenceManager().newQuery(query);
 			newQuery.setResult("COUNT(id)");
-			total = (Long)newQuery.execute();
+			total = (Long)newQuery.executeWithMap(map);
 		}
 		return total;
 	}
@@ -45,7 +52,7 @@ public class Pagination<T> {
 			Query newQuery = query.getPersistenceManager().newQuery(query);
 			int offset = (page - 1) * pageSize;
 			newQuery.setRange(offset, offset + pageSize);
-			items = (List<T>) newQuery.execute();
+			items = (List<T>) newQuery.executeWithMap(map);
 		}
 		return items;
 	}

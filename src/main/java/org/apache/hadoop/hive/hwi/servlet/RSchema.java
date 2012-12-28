@@ -20,8 +20,8 @@ import org.apache.hadoop.hive.ql.session.SessionState;
 import com.sun.jersey.api.view.Viewable;
 
 @Path("/schema")
-public class Schema extends Base {
-	protected static final Log l4j = LogFactory.getLog(Schema.class.getName());
+public class RSchema extends RBase {
+	protected static final Log l4j = LogFactory.getLog(RSchema.class.getName());
 
 	@GET
 	@Produces("text/html")

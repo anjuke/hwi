@@ -59,11 +59,10 @@ import java.io.OutputStreamWriter;
 @Provider
 public class VelocityViewProcessor implements ViewProcessor<String> {
 
-	
-	private @Context
-	HttpServletRequest request;
+	@Context
+	private ThreadLocal<HttpServletRequest> request;
 
-	Velocity v;
+	private final Velocity v;
 
 	public VelocityViewProcessor(@Context ResourceConfig resourceConfig, @Context ServletConfig sc) {
 		v = new Velocity(sc);
@@ -82,9 +81,10 @@ public class VelocityViewProcessor implements ViewProcessor<String> {
 	@Override
 	public void writeTo(String resolvedPath, Viewable viewable, OutputStream out)
 			throws IOException {
+		
 		// Commit the status and headers to the HttpServletResponse
 		out.flush();
 
-		v.render(resolvedPath, request, new OutputStreamWriter(out));
+		v.render(resolvedPath, request.get(), new OutputStreamWriter(out));
 	}
 }

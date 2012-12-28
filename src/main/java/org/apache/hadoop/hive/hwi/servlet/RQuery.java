@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 
+import javax.jdo.Query;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
@@ -30,30 +31,39 @@ import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.hive.conf.HiveConf;
 import org.apache.hadoop.hive.hwi.HWIUtil;
-import org.apache.hadoop.hive.hwi.Pagination;
-import org.apache.hadoop.hive.hwi.QueryManager;
-import org.apache.hadoop.hive.hwi.QueryStore;
 import org.apache.hadoop.hive.hwi.model.MQuery;
+import org.apache.hadoop.hive.hwi.model.Pagination;
+import org.apache.hadoop.hive.hwi.query.QueryManager;
+import org.apache.hadoop.hive.hwi.query.QueryStore;
 import org.apache.hadoop.hive.ql.exec.Utilities;
 import org.apache.hadoop.hive.ql.session.SessionState;
 
 import com.sun.jersey.api.view.Viewable;
 
 @Path("/queries")
-public class Query extends Base {
-	protected static final Log l4j = LogFactory.getLog(Query.class.getName());
-
+public class RQuery extends RBase {
+	protected static final Log l4j = LogFactory.getLog(RQuery.class.getName());
+	
 	@GET
 	@Produces("text/html")
 	public Viewable list(
+			@QueryParam(value = "crontabId") Integer crontabId,
 			@QueryParam(value = "page") @DefaultValue(value = "1") int page,
 			@QueryParam(value = "pageSize") @DefaultValue(value = "20") int pageSize) {
 
-		HiveConf hiveConf = new HiveConf(SessionState.class);
-		QueryStore qs = new QueryStore(hiveConf);
-
-		Pagination<MQuery> pagination = qs.paginate(page, pageSize);
-
+		QueryStore qs = QueryStore.getInstance();
+		Pagination<MQuery> pagination = null;
+		
+		if(crontabId != null){
+			Query query = qs.getPM().newQuery(MQuery.class, "crontabId == :crontabId");
+			query.setOrdering("id DESC");
+			HashMap<String, Object> map = new HashMap<String, Object>();
+			map.put("crontabId", crontabId);
+			pagination = qs.paginate(query, map, page, pageSize);
+		}else{
+			pagination = qs.paginate(page, pageSize);
+		}
+		
 		request.setAttribute("pagination", pagination);
 
 		return new Viewable("/query/list.vm");
@@ -63,8 +73,8 @@ public class Query extends Base {
 	@Path("{id}")
 	@Produces("text/html")
 	public Viewable info(@PathParam(value = "id") Integer id) {
-		HiveConf hiveConf = new HiveConf(SessionState.class);
-		QueryStore qs = new QueryStore(hiveConf);
+		QueryStore qs = QueryStore.getInstance();
+		
 		MQuery query = qs.getById(id);
 
 		if (query == null)
@@ -85,13 +95,17 @@ public class Query extends Base {
 			request.setAttribute("jobInfos", jobInfos);
 		}
 
+		SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		request.setAttribute("createdTime", sf.format(query.getCreated()));
+		request.setAttribute("updatedTime", sf.format(query.getUpdated()));
+		
 		if (query.getCpuTime() != null) {
 			request.setAttribute("cpuTime",
 					Utilities.formatMsecToStr(query.getCpuTime()));
 		}
 
 		if (query.getTotalTime() != null) {
-			request.setAttribute("toalTime",
+			request.setAttribute("totalTime",
 					Utilities.formatMsecToStr(query.getTotalTime()));
 		}
 
@@ -134,27 +148,12 @@ public class Query extends Base {
 			name = sf.format(created);
 		}
 
-		HiveConf hiveConf = new HiveConf(SessionState.class);
-		QueryStore qs = new QueryStore(hiveConf);
+		QueryStore qs = QueryStore.getInstance();
 
-		MQuery mquery = new MQuery();
-		mquery.setName(name);
-		mquery.setQuery(query);
-		mquery.setCallback(callback);
-		mquery.setResultLocation("");
-		mquery.setCreated(created);
-		mquery.setUpdated(created);
-		mquery.setStatus(MQuery.Status.INITED);
-		mquery.setResultLocation("");
-		mquery.setUserId("hadoop");
+		MQuery mquery = new MQuery(name, query, callback, "hadoop");
 		qs.insertQuery(mquery);
 
-		mquery.setResultLocation("/user/hive/result/" + mquery.getId() + "/");
-		qs.updateQuery(mquery);
-
-		// submit to QueryManager
-		QueryManager qm = (QueryManager) context.getAttribute("qm");
-		qm.submit(mquery);
+		QueryManager.getInstance().submit(mquery);
 
 		throw new WebApplicationException(Response.seeOther(
 				URI.create("queries/" + mquery.getId())).build());
@@ -167,9 +166,9 @@ public class Query extends Base {
 			@PathParam(value = "id") Integer id,
 			@QueryParam(value = "raw") @DefaultValue(value = "false") boolean raw) {
 		Viewable v = new Viewable("/query/result.vm");
-
-		HiveConf hiveConf = new HiveConf(SessionState.class);
-		QueryStore qs = new QueryStore(hiveConf);
+		
+		QueryStore qs = QueryStore.getInstance();
+		
 		MQuery query = qs.getById(id);
 
 		if (query == null) {
@@ -188,6 +187,7 @@ public class Query extends Base {
 
 			org.apache.hadoop.fs.Path rPath = new org.apache.hadoop.fs.Path(
 					query.getResultLocation());
+			HiveConf hiveConf = new HiveConf(SessionState.class);
 			FileSystem fs = rPath.getFileSystem(hiveConf);
 
 			if (!fs.getFileStatus(rPath).isDir()) {

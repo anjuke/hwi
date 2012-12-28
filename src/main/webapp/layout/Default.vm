@@ -17,7 +17,13 @@
                         <ul class="nav">
 							<li #if($nav=='schema')class="active"#end>
                                 <a href="/hwi/schema">Schema</a>
-                            </li>                          
+                            </li>
+							<li #if($nav=='crontab.list')class="active"#end>
+                                <a href="/hwi/crontabs">All Crontabs</a>
+                            </li>
+							<li #if($nav=='crontab.create')class="active"#end>
+                                <a href="/hwi/crontabs/create">Create Crontab</a>
+                            </li>
                             <li #if($nav=='query.list')class="active"#end>
                                 <a href="/hwi/queries">All Queries</a>
                             </li>
@@ -46,10 +52,15 @@
             <!-- /navbar-inner -->
         </div>
         <div style="padding-top:60px;">
-			
-			#msg($msg $type)
-
-            <div class="container">
+			<div class="container">
+				
+				#if($msg)
+				<div class="alert alert-#alt($type 'error')">
+					<button type="button" class="close" data-dismiss="alert">&times;</button>
+					$msg
+				</div>
+				#end
+            
                 $screen_content
             </div>
         </div>

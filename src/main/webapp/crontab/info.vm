@@ -1,0 +1,35 @@
+#set($nav='crontab.list')
+
+<div>
+<a href="/hwi/crontabs">Crontabs</a>
+/
+<h2>$crontab.getName()<a class="pull-right" href="/hwi/queries?crontabId=$crontab.getId()" title="Query History"><i class="icon-film"></i></a></h2>
+</div>
+<hr>
+    
+<dl class="dl-horizontal">
+    <dt><span class="label #crontab_status($crontab.getStatus())">$crontab.getStatus()</span></dt>
+    <dd>
+        #if ( $crontab.getStatus() == 'RUNNING' )
+        <a href="/hwi/crontabs/$crontab.getId()/changeStatus/paused" title="pause"><i class="icon-pause"></i></a>
+        #elseif ( $crontab.getStatus() == 'PAUSED' )
+        <a href="/hwi/crontabs/$crontab.getId()/changeStatus/running" title="start"><i class="icon-time"></i></a>
+        #end
+    </dd>
+</dl>
+
+<hr>
+<h3>Basic</h3>
+<hr>
+<dl class="dl-horizontal">
+	<dt>Crontab</dt>
+    <dd>#alt($crontab.getCrontab() '--')</dd>
+    <dt>Query</dt>
+    <dd><pre><code>#alt($crontab.getQuery() '--')</code></pre></dd>
+    <dt>Callback</dt>
+    <dd>#alt($crontab.getCallback() '--')</dd>
+    <dt>Created</dt>
+    <dd>#alt($createdTime "--")</dd>
+    <dt>Updated</dt>
+    <dd>#alt($updatedTime "--")</dd>
+</dl>
