@@ -33,7 +33,7 @@ if (pageStr != null && !"".equals(pageStr.trim())) {
     pageInt = Integer.parseInt(pageStr);
 }
 
-int pageSize = 50;
+int pageSize = 10;
 Long count = qs.getAllQueryCount();
 
 int totalPage = 1;
