@@ -2,7 +2,7 @@
 #set($nav='query.create')
 
 <h2>Create a Hive Query</h2>
-<hr>
+<hr class="bold">
 		
 <form action="" method="post" class="form-horizontal">
 

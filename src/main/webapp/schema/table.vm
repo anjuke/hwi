@@ -8,7 +8,7 @@
 <h1>$t.getTableName()</h1>
 </div>
 
-<hr>
+<hr class="bold">
 
 #set($sd = $t.getSd())
 
@@ -43,7 +43,7 @@
     <tr>
         <td>$fs.getName()</td>
         <td>$fs.getType()</td>
-        <td>#alt($fs.getComment() '--')</td>
+        <td>$!{fs.getComment()}</td>
     </tr>
     #end
     </tbody>
@@ -112,9 +112,9 @@
 
 <dl class="dl-horizontal">
     <dt>Name</dt>
-    <dd>#alt(${si.getName()} '--')</dd>
+    <dd>$!{si.getName()}</dd>
     <dt>Lib</dt>
-    <dd>$si.getSerializationLib()</dd>
+    <dd>$!{si.getSerializationLib()}</dd>
 </dl>
 
 <hr>
@@ -152,7 +152,7 @@
     <tr>
         <td>$fs.getName()</td>
         <td>$fs.getType()</td>
-        <td>$fs.getComment()</td>
+        <td>$!{fs.getComment()}</td>
     </tr>
     #end
     </tbody>

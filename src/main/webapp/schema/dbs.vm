@@ -1,7 +1,7 @@
 #set($nav='schema')
 
 <h2>Database</h2>
-<hr>
+<hr class="bold">
 <table class="table table-bordered table-striped">
     <tbody>
     #foreach($db in $dbs)

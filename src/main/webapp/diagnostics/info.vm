@@ -1,4 +1,7 @@
-<h2>System.getProperties()</h2>
+<h2>Diagnostics</h2>
+<hr class="bold">
+
+<h3>System.getProperties()</h3>
 <hr>
 <table class="table table-bordered table-striped">
     <thead>
@@ -19,7 +22,7 @@
 
 <hr>
 	
-<h2>System.getenv()</h2>
+<h3>System.getenv()</h3>
 <hr>
 <table class="table table-bordered table-striped">
     <thead>

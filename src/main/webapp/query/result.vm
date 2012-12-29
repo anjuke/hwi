@@ -6,7 +6,7 @@
 <h2>Result</h2>
 </div>
 
-<hr/>
+<hr class="bold"/>
 
 <dl class="dl-horizontal">
 <dt>Location</dt>

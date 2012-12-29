@@ -16,7 +16,7 @@
     #end
 </h2>
 </div>
-<hr>
+<hr class="bold">
     
 <dl class="dl-horizontal">
     <dt><span class="label #query_status($query.getStatus())">$query.getStatus()</span></dt>

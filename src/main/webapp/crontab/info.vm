@@ -5,7 +5,7 @@
 /
 <h2>$crontab.getName()<a class="pull-right" href="/hwi/queries?crontabId=$crontab.getId()" title="Query History"><i class="icon-film"></i></a></h2>
 </div>
-<hr>
+<hr class="bold">
     
 <dl class="dl-horizontal">
     <dt><span class="label #crontab_status($crontab.getStatus())">$crontab.getStatus()</span></dt>

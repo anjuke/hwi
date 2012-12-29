@@ -2,7 +2,7 @@
 #set($nav='crontab.create')
 
 <h2>Create a Hive Crontab</h2>
-<hr>
+<hr class="bold">
 		
 #parse('crontab_edit_form.vm')
 

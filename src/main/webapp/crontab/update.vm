@@ -2,7 +2,7 @@
 #set($nav='crontab.list')
 
 <h2>Update a Hive Crontab</h2>
-<hr>
+<hr class="bold">
 
 #set($name=$crontab.getName())
 #set($query=$crontab.getQuery())

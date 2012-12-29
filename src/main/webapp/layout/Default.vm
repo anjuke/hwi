@@ -9,46 +9,37 @@
 		<script type="text/javascript" src="/hwi/assets/js/less-1.3.0.min.js"></script>
     </head>
     <body>
-        <div class="navbar navbar-fixed-top navbar-inverse">
-            <div class="navbar-inner">
-                <div class="container-fluid">
-                    <a class="brand" href="/hwi">HWI</a>
-                    <div class="nav-collapse">
-                        <ul class="nav">
-							<li #if($nav=='schema')class="active"#end>
-                                <a href="/hwi/schema">Schema</a>
-                            </li>
-							<li #if($nav=='crontab.list')class="active"#end>
-                                <a href="/hwi/crontabs">All Crontabs</a>
-                            </li>
-							<li #if($nav=='crontab.create')class="active"#end>
-                                <a href="/hwi/crontabs/create">Create Crontab</a>
-                            </li>
-                            <li #if($nav=='query.list')class="active"#end>
-                                <a href="/hwi/queries">All Queries</a>
-                            </li>
-							<li #if($nav=='query.create')class="active"#end>
-                                <a href="/hwi/queries/create">Create Query</a>
-                            </li>
-                        </ul>
-                        <ul class="nav pull-right">
-                            <li>
-                                <a href="https://cwiki.apache.org/confluence/display/Hive/LanguageManual+UDF" target="_blank">UDF Manual</a>
-                            </li>
-							<li>
-                                <a href="http://hive.apache.org" target="_blank">Apache Hive</a>
-                            </li>
-                            <li>
-                                <a href="/hwi/diagnostics">Diagnostics</a>
-                            </li>
-                        </ul>
-                    </div>
-                    <!-- /.nav-collapse -->
-                </div>
-            </div>
-            <!-- /navbar-inner -->
+        <div id="sidebar" class="thumbnail">
+            <img src="/hwi/assets/img/hat.png"/>
+            <h3>HWI</h3>
+            <hr/>
+            <ul class="nav nav-list">
+                <li class="nav-header">Database</li>
+                <li #if($nav=='schema')class="active"#end>
+                    <a href="/hwi/schema">Schema</a>
+                </li>
+                <li class="nav-header">Query</li>
+                <li #if($nav=='query.list')class="active"#end>
+                    <a href="/hwi/queries">All Queries</a>
+                </li>
+                <li #if($nav=='query.create')class="active"#end>
+                    <a href="/hwi/queries/create">Create Query</a>
+                </li>
+                <li class="nav-header">Crontab</li>
+                <li #if($nav=='crontab.list')class="active"#end>
+                    <a href="/hwi/crontabs">All Crontabs</a>
+                </li>
+                <li #if($nav=='crontab.create')class="active"#end>
+                    <a href="/hwi/crontabs/create">Create Crontab</a>
+                </li>
+                <li class="nav-header">Help</li>
+                <li><a href="https://cwiki.apache.org/confluence/display/Hive/LanguageManual+UDF" target="_blank">UDF Manual</a></li>
+                <li><a href="http://hive.apache.org" target="_blank">Apache Hive</a></li>
+                <li><a href="/hwi/diagnostics">Diagnostics</a></li>
+            </ul>
         </div>
-        <div style="padding-top:60px;">
+        
+        <div id="body">
 			<div class="container">
 				
 				#if($msg)

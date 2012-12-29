@@ -4,8 +4,8 @@
 <a href="/hwi/schema">Schema</a>
 / 
 <h1>$db.getName()</h1>
-<hr>
 </div>
+<hr class="bold">
 
 <dl class="dl-horizontal">
 <dt>Name</dt>
