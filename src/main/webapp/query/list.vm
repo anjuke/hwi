@@ -4,9 +4,13 @@
 <div class="pagination">
     <ul>
         <li><span>$pagination.getTotal()</span></li>
-		#set($pages=$pagination.getPages()+1)
+		#set($pages=$pagination.getPages())
+        #if($pages > 0)
         #foreach( $page in [1..$pages] )
-        <li class="#if($page==$pagination.getPage())active#end"><a href="?page=$page">$page</a></li>
+        <li class="#if($page==$pagination.getPage())active#end">
+            <a href="?#if($crontabId)crontabId=$crontabId&#{end}page=$page&pageSize=$pagination.getPageSize()">$page</a>
+        </li>
+        #end
         #end
     </ul>
 </div>
@@ -60,7 +64,7 @@
     </tbody>
 </table>
 
-#if($pagination.getItems().size() > 5)
+#if($pagination.getItems().size() > 10)
 #pagination
 #end
 

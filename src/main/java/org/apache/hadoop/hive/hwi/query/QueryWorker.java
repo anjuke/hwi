@@ -68,23 +68,26 @@ public class QueryWorker implements Runnable {
 
 		ArrayList<String> queries = new ArrayList<String>();
 
-		Calendar c = Calendar.getInstance();
-		queries.add("set year=" + c.get(Calendar.YEAR));
-		queries.add("set month=" + c.get(Calendar.MONTH));
-		queries.add("set day=" + c.get(Calendar.DAY_OF_MONTH));
-		queries.add("set hour=" + c.get(Calendar.HOUR_OF_DAY));
-		queries.add("set minute=" + c.get(Calendar.MINUTE));
-		queries.add("set second=" + c.get(Calendar.SECOND));
-
 		// query is not safe ! safe it !
 		String queryStr = HWIUtil.getSafeQuery(mquery.getQuery());
+
+		if (queryStr.contains("hiveconf")) {
+			Calendar c = Calendar.getInstance();
+			queries.add("set year=" + c.get(Calendar.YEAR));
+			queries.add("set month=" + c.get(Calendar.MONTH));
+			queries.add("set day=" + c.get(Calendar.DAY_OF_MONTH));
+			queries.add("set hour=" + c.get(Calendar.HOUR_OF_DAY));
+		}
+		
 		queries.addAll(Arrays.asList(queryStr.split(";")));
 
 		long start_time = System.currentTimeMillis();
 		for (String query : queries) {
-			if("".equals(query)) continue;
+			if ("".equals(query))
+				continue;
 			try {
-				CommandProcessorResponse resp = runQuery(query, mquery.getResultLocation());
+				CommandProcessorResponse resp = runQuery(query,
+						mquery.getResultLocation());
 				mquery.setErrorMsg(resp.getErrorMessage());
 				mquery.setErrorCode(resp.getResponseCode());
 			} catch (Exception e) {
@@ -99,14 +102,15 @@ public class QueryWorker implements Runnable {
 		qs.updateQuery(mquery);
 	}
 
-	protected CommandProcessorResponse runQuery(String cmd, String resultLocation)
-			throws RuntimeException, CommandNeedRetryException {
+	protected CommandProcessorResponse runQuery(String cmd,
+			String resultLocation) throws RuntimeException,
+			CommandNeedRetryException {
 		String cmd_trimmed = cmd.trim();
 		String[] tokens = cmd_trimmed.split("\\s+");
 
 		if ("select".equalsIgnoreCase(tokens[0])) {
-			cmd_trimmed = "INSERT OVERWRITE DIRECTORY '"
-					+ resultLocation + "' " + cmd_trimmed;
+			cmd_trimmed = "INSERT OVERWRITE DIRECTORY '" + resultLocation
+					+ "' " + cmd_trimmed;
 		}
 
 		CommandProcessor proc = CommandProcessorFactory

@@ -217,7 +217,11 @@ public class QueryStore {
 	public Pagination<MCrontab> crontabPaginate(int page, int pageSize) {
 		Query query = getPM().newQuery(MCrontab.class);
 		query.setOrdering("id DESC");
-		return new Pagination<MCrontab>(query, null, page, pageSize);
+		return crontabPaginate(query, null, page, pageSize);
+	}
+	
+	public Pagination<MCrontab> crontabPaginate(Query query, Map<String, Object> map, int page, int pageSize) {
+		return new Pagination<MCrontab>(query, map, page, pageSize);
 	}
 	
 	@SuppressWarnings("unchecked")

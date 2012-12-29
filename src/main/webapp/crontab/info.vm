@@ -10,20 +10,42 @@
 <dl class="dl-horizontal">
     <dt><span class="label #crontab_status($crontab.getStatus())">$crontab.getStatus()</span></dt>
     <dd>
-        #if ( $crontab.getStatus() == 'RUNNING' )
-        <a href="/hwi/crontabs/$crontab.getId()/changeStatus/paused" title="pause"><i class="icon-pause"></i></a>
-        #elseif ( $crontab.getStatus() == 'PAUSED' )
-        <a href="/hwi/crontabs/$crontab.getId()/changeStatus/running" title="start"><i class="icon-time"></i></a>
+        #if ( $crontab.getStatus() == 'RUNNING' || $crontab.getStatus() == 'DELETED')
+        <a class="crontab-action" href="/hwi/crontabs/$crontab.getId()/changeStatus/paused" title="pause"><i class="icon-pause"></i></a>
         #end
+        
+        #if ( $crontab.getStatus() == 'PAUSED')
+        <a class="crontab-action" href="/hwi/crontabs/$crontab.getId()/changeStatus/running" title="run"><i class="icon-time"></i></a>
+        #end
+        
+        #if ( $crontab.getStatus() == 'RUNNING' || $crontab.getStatus() == 'PAUSED')
+        <a style="margin-left:10px;" href="/hwi/crontabs/$crontab.getId()/update" title="edit"><i class="icon-edit"></i></a>
+        <a class="crontab-action" style="margin-left:10px;" href="/hwi/crontabs/$crontab.getId()/changeStatus/deleted" title="delete"><i class="icon-trash"></i></a>
+        #end
+        
     </dd>
 </dl>
+
+<script>
+$(function(){
+    $('a.crontab-action').click(function(){
+        var msg = 'Are you Sure to ' + $(this).attr('title') + ' this Crontab ?'
+        if(confirm(msg)){
+            return true
+        }else{
+            return false
+        }
+    })
+})
+</script>
+
 
 <hr>
 <h3>Basic</h3>
 <hr>
 <dl class="dl-horizontal">
 	<dt>Crontab</dt>
-    <dd>#alt($crontab.getCrontab() '--')</dd>
+    <dd><code>#alt($crontab.getCrontab() '--')</code></dd>
     <dt>Query</dt>
     <dd><pre><code>#alt($crontab.getQuery() '--')</code></pre></dd>
     <dt>Callback</dt>

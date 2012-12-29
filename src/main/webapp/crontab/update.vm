@@ -1,0 +1,16 @@
+#set($title='crontab update')
+#set($nav='crontab.list')
+
+<h2>Update a Hive Crontab</h2>
+<hr>
+
+#set($name=$crontab.getName())
+#set($query=$crontab.getQuery())
+#set($tokens=$crontab.getCrontab().split(" "))
+#set($hour=$tokens[2])
+#set($day=$tokens[3])
+#set($month=$tokens[4])
+#set($week=$tokens[5])
+
+#parse('crontab_edit_form.vm')
+

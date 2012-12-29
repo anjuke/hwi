@@ -58,6 +58,6 @@ public class Pagination<T> {
 	}
 
 	public int getPages(){
-		return (int) Math.ceil(getTotal() / pageSize);
+		return (int) Math.ceil((double) getTotal() / pageSize);
 	}
 }

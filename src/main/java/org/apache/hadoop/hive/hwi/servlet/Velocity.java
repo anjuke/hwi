@@ -151,5 +151,9 @@ public class Velocity extends VelocityView{
 		}
 		merge(template, context, writer);
 	}
+	
+	public boolean templateExists(String name){
+		return velocity.resourceExists(name);
+	}
 
 }

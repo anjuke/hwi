@@ -70,10 +70,9 @@ public class VelocityViewProcessor implements ViewProcessor<String> {
 
 	@Override
 	public String resolve(String path) {
-		try {
-			v.getTemplate(path);
+		if(v.templateExists(path)){
 			return path;
-		} catch (Exception e) {
+		}else{
 			return null;
 		}
 	}

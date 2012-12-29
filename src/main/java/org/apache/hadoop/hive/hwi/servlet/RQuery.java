@@ -64,6 +64,7 @@ public class RQuery extends RBase {
 			pagination = qs.paginate(page, pageSize);
 		}
 		
+		request.setAttribute("crontabId", crontabId);
 		request.setAttribute("pagination", pagination);
 
 		return new Viewable("/query/list.vm");
@@ -135,7 +136,7 @@ public class RQuery extends RBase {
 			@FormParam(value = "callback") String callback) {
 
 		Viewable v = new Viewable("/query/create.vm");
-
+		
 		if (query == null || query.equals("")) {
 			request.setAttribute("msg", "query can't be empty");
 			return v;

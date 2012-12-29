@@ -1,0 +1,49 @@
+<form action="" method="post" class="form-horizontal">
+
+        <div class="control-group">
+            <label class="control-label" for="fldquery">Name</label>
+            <div class="controls">
+                <input type="text" name="name" value="$!name" placeholder="Enter crontab name" />
+            </div>
+        </div>
+        
+        <div class="control-group">
+            <label class="control-label" for="fldquery">Query</label>
+            <div class="controls">
+                <textarea class="input-block-level" name="query" rows="10" cols="20" placeholder="Enter hive query">$!query</textarea>
+            </div>
+        </div>
+        
+        <div class="control-group">
+            <label class="control-label" for="fldquery">Crontab</label>
+            <div class="controls">
+                0 0 
+                <input type="text" style="width:30px" name="hour" value="$!hour" placeholder="hour"/>
+                <input type="text" style="width:30px" name="day" value="$!day" placeholder="day"/>
+                <input type="text" style="width:40px" name="month" value="$!month" placeholder="month"/>
+                <input type="text" style="width:40px" name="week" value="$!week" placeholder="week"/>
+                *
+                <a class="pull-right" href="#crontab-ref" onclick="$($(this).attr('href')).toggle()"><i class="icon-book"></i></a>
+                <div id="crontab-ref"  style="display: none">
+                <hr>
+                Systax
+                <hr>
+                <pre><code>second minute hour day month week year</code></pre>
+                <hr/>
+                Examples
+                <hr/>
+                <p>run query every five hour</p>
+                <pre><code>0 0 0/5 * * ? *</code></pre> 
+                <p>run query at 10:00, 11:00, 12:00, and 13:00, on every Wednesday and Friday</p>
+                <pre><code>0 0 10-13 ? * WED,FRI *</code></pre>
+                <a href="http://en.wikipedia.org/wiki/Cron#CRON_expression" target="_blank">More</a>
+                </div>
+            </div>
+            
+        </div>
+
+
+    <div class="form-actions">
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </div>
+</form>

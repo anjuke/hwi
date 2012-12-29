@@ -7,6 +7,7 @@ import org.quartz.CronScheduleBuilder;
 import org.quartz.JobBuilder;
 import org.quartz.JobDataMap;
 import org.quartz.JobDetail;
+import org.quartz.JobKey;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.Trigger;
@@ -95,6 +96,24 @@ public class QueryCron {
 
 	}
 
+
+	public boolean unschedule(MCrontab crontab) {
+		if (scheduler == null)
+			return false;
+
+		if (crontab.getId() == null)
+			return false;
+		
+		try {
+			scheduler.deleteJob(new JobKey(crontab.getId().toString(), crontab.getUserId()));
+			return true;
+		} catch (SchedulerException e) {
+			e.printStackTrace();
+			l4j.error("QueryCron unschedule failed.");
+			return false;
+		}
+	}
+	
 	public void shutdown() {
 		if (scheduler == null)
 			return;

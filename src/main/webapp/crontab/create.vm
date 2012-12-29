@@ -4,32 +4,5 @@
 <h2>Create a Hive Crontab</h2>
 <hr>
 		
-<form action="" method="post" class="form-horizontal">
-
-		<div class="control-group">
-			<label class="control-label" for="fldquery">Name</label>
-			<div class="controls">
-				<input type="text" name="name" value="$!name" placeholder="Enter crontab name" />
-			</div>
-		</div>
-		
-		<div class="control-group">
-			<label class="control-label" for="fldquery">Query</label>
-			<div class="controls">
-				<textarea class="input-block-level" name="query" rows="10" cols="20" placeholder="Enter hive query">$!query</textarea>
-			</div>
-		</div>
-		
-		<div class="control-group">
-			<label class="control-label" for="fldquery">Crontab</label>
-			<div class="controls">
-				<input type="text" name="crontab" value="$!crontab" placeholder="Enter crontab"></textarea>
-			</div>
-		</div>
-
-
-	<div class="form-actions">
-		<button type="submit" class="btn btn-primary">Submit</button>
-	</div>
-</form>
+#parse('crontab_edit_form.vm')
 

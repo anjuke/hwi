@@ -47,7 +47,7 @@ public class HWIContextListener implements javax.servlet.ServletContextListener 
     
     QueryManager.getInstance().start();
     
-    //QueryCron.getInstance().start();
+    QueryCron.getInstance().start();
 
   }
 
