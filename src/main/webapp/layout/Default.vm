@@ -10,7 +10,7 @@
     </head>
     <body>
         <div id="sidebar" class="thumbnail">
-            <img src="/hwi/assets/img/hat.png"/>
+            <img src="/hwi/assets/img/flash.png"/>
             <h3>HWI</h3>
             <hr/>
             <ul class="nav nav-list">

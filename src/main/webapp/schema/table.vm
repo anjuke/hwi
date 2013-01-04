@@ -5,7 +5,7 @@
 / 
 <a href="/hwi/schema/$t.getDbName()">$t.getDbName()</a>
 /
-<h1>$t.getTableName()</h1>
+<h2>$t.getTableName()</h2>
 </div>
 
 <hr class="bold">
@@ -28,7 +28,7 @@
 </dl>
 
 <hr>
-<h2>Field Schema</h2>
+<h3>Field Schema</h3>
 <hr>
 <table class="table table-bordered table-striped">
     <thead>
@@ -65,7 +65,7 @@
 </table>
 
 <hr>
-<h2>Sort Columns</h2>
+<h3>Sort Columns</h3>
 <hr>
 <table class="table table-bordered table-striped">
     <thead>
@@ -85,7 +85,7 @@
 </table>
 
 <hr>
-<h2>Parameters</h2>
+<h3>Parameters</h3>
 <hr>
 <table class="table table-bordered table-striped">
     <thead>
@@ -105,7 +105,7 @@
 </table>
 
 <hr>
-<h2>SerDe Info</h2>
+<h3>SerDe Info</h3>
 <hr>
 
 #set($si = $sd.getSerdeInfo())
@@ -137,7 +137,7 @@
 </table>
 
 <hr>
-<h2>Partition Information</h2>
+<h3>Partition Information</h3>
 <hr>
 <table class="table table-bordered table-striped">
     <thead>

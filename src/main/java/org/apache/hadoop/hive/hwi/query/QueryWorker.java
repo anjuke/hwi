@@ -77,6 +77,8 @@ public class QueryWorker implements Runnable {
 			queries.add("set month=" + c.get(Calendar.MONTH));
 			queries.add("set day=" + c.get(Calendar.DAY_OF_MONTH));
 			queries.add("set hour=" + c.get(Calendar.HOUR_OF_DAY));
+			queries.add("set minute=" + c.get(Calendar.MINUTE));
+			queries.add("set second=" + c.get(Calendar.SECOND));
 		}
 		
 		queries.addAll(Arrays.asList(queryStr.split(";")));

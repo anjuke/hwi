@@ -3,7 +3,7 @@
 <div>
 <a href="/hwi/schema">Schema</a>
 / 
-<h1>$db.getName()</h1>
+<h2>$db.getName()</h2>
 </div>
 <hr class="bold">
 

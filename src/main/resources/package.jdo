@@ -111,7 +111,7 @@ http://java.sun.com/xml/ns/jdo/jdo_2_0.xsd">
         <column name="NAME" length="128" jdbc-type="VARCHAR" allows-null="false" />
       </field>
       
-      <field name="query">  
+      <field name="query">
         <column name="QUERY" jdbc-type="LONGVARCHAR" allows-null="false" />
       </field>
       

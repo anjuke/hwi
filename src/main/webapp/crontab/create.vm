@@ -4,5 +4,4 @@
 <h2>Create a Hive Crontab</h2>
 <hr class="bold">
 		
-#parse('crontab_edit_form.vm')
-
+#parse('/crontab/crontab_edit_form.vm')
