@@ -143,7 +143,7 @@
                 <configuration>
                     <attachClasses>true</attachClasses>
                     <archiveClasses>true</archiveClasses>
-                    <packagingExcludes>WEB-INF/lib/*.jar</packagingExcludes>
+                    <!-- <packagingExcludes>WEB-INF/lib/*.jar</packagingExcludes>-->
                 </configuration>
             </plugin>
         </plugins>

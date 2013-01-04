@@ -43,9 +43,11 @@ public class QueryStore {
 	
 	private ThreadLocal<PersistenceManager> pm = new ThreadLocal<PersistenceManager>();
 
+	@SuppressWarnings("rawtypes")
 	private static final Map<String, Class> PINCLASSMAP;
 	static {
-		Map<String, Class> map = new HashMap();
+		@SuppressWarnings("rawtypes")
+		Map<String, Class> map = new HashMap<String, Class>();
 		map.put("table", MTable.class);
 		map.put("storagedescriptor", MStorageDescriptor.class);
 		map.put("serdeinfo", MSerDeInfo.class);
