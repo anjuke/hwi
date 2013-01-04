@@ -4,9 +4,10 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
+import java.util.Date;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -72,13 +73,19 @@ public class QueryWorker implements Runnable {
 		String queryStr = HWIUtil.getSafeQuery(mquery.getQuery());
 
 		if (queryStr.contains("hiveconf")) {
-			Calendar c = Calendar.getInstance();
-			queries.add("set year=" + c.get(Calendar.YEAR));
-			queries.add("set month=" + c.get(Calendar.MONTH));
-			queries.add("set day=" + c.get(Calendar.DAY_OF_MONTH));
-			queries.add("set hour=" + c.get(Calendar.HOUR_OF_DAY));
-			queries.add("set minute=" + c.get(Calendar.MINUTE));
-			queries.add("set second=" + c.get(Calendar.SECOND));
+			Date d = new Date();
+			SimpleDateFormat ft = new SimpleDateFormat("yyyy");
+			queries.add("set year=" + ft.format(d));
+			ft = new SimpleDateFormat("MM");
+			queries.add("set month=" + ft.format(d));
+			ft = new SimpleDateFormat("dd");
+			queries.add("set day=" + ft.format(d));
+			ft = new SimpleDateFormat("HH");
+			queries.add("set hour=" + ft.format(d));
+			ft = new SimpleDateFormat("mm");
+			queries.add("set minute=" + ft.format(d));
+			ft = new SimpleDateFormat("ss");
+			queries.add("set second=" + ft.format(d));
 		}
 		
 		queries.addAll(Arrays.asList(queryStr.split(";")));

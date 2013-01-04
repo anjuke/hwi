@@ -5,8 +5,11 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Properties;
 
 import javax.jdo.Query;
@@ -15,7 +18,6 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hive.conf.HiveConf;
 import org.apache.hadoop.hive.hwi.model.MCrontab;
 import org.apache.hadoop.hive.hwi.model.MQuery;
-import org.apache.hadoop.hive.hwi.model.Pagination;
 import org.apache.hadoop.hive.hwi.query.QueryCron;
 import org.apache.hadoop.hive.hwi.query.QueryManager;
 import org.apache.hadoop.hive.hwi.query.QueryStore;
@@ -82,10 +84,6 @@ public class TestEverything {
 		QueryManager.getInstance().shutdown();
 	}
 	
-	public static void testCalendar(){
-		System.out.println(Calendar.getInstance().get(Calendar.YEAR));
-	}
-	
 	public static void testInt(){
 		System.out.println(new Integer(10).toString());
 	}
@@ -102,7 +100,18 @@ public class TestEverything {
 		//System.out.println(pagination.getTotal());
 	}
 	
+	public static void testCalendar(){
+		Calendar c = Calendar.getInstance();
+		System.out.println(c.getDisplayName(Calendar.MONTH, Calendar.SHORT, Locale.CHINA));
+	}
+	
+	public static void testDate(){
+		Date d = new Date();
+		SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		System.out.println(ft.format(d));
+	}
+	
 	public static void main(String[] args) throws Exception {
-		testQuery();
+		testDate();
 	}
 }
