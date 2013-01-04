@@ -2,9 +2,9 @@
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.apache.hadoop.hive.hwi</groupId>
-    <artifactId>hwi</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <groupId>org.apache.hive</groupId>
+    <artifactId>hive-hwi</artifactId>
+    <version>1.0</version>
     <packaging>war</packaging>
 
     <name>hwi</name>
@@ -107,7 +107,6 @@
     </dependencies>
 
     <build>
-        <finalName>hive-hwi-1.0</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -143,7 +142,7 @@
                 <configuration>
                     <attachClasses>true</attachClasses>
                     <archiveClasses>true</archiveClasses>
-                    <!-- <packagingExcludes>WEB-INF/lib/*.jar</packagingExcludes>-->
+                    <!--<packagingExcludes>WEB-INF/lib/*.jar</packagingExcludes>-->
                 </configuration>
             </plugin>
         </plugins>
