@@ -1,0 +1,42 @@
+<h2>Diagnostics</h2>
+<hr class="bold">
+
+<h3>System.getProperties()</h3>
+<hr>
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Value</th>
+        </tr>
+    </thead>
+    <tbody>
+        #foreach ($key in $p.keySet())
+        <tr>
+            <td>$key</td>
+			<td>$p.getProperty($key)</td>
+        </tr>
+        #end
+    </tbody>
+</table>
+
+<hr>
+	
+<h3>System.getenv()</h3>
+<hr>
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Value</th>
+        </tr>
+    </thead>
+    <tbody>
+        #foreach ($key in $env.keySet())
+        <tr>
+            <td>$key</td>
+			<td>$env.get($key)</td>	
+        </tr>
+        #end
+	</tbody>
+</table>

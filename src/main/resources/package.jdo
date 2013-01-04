@@ -80,6 +80,10 @@ http://java.sun.com/xml/ns/jdo/jdo_2_0.xsd">
         <column name="USER_ID" length="32" jdbc-type="VARCHAR" allows-null="false"/>
       </field>
       
+      <field name="crontabId">
+        <column name="CRONTAB_ID" jdbc-type="INTEGER" allows-null="true"/>
+      </field>
+      
       <field name="created">
         <column name="CREATED" jdbc-type="TIMESTAMP" allows-null="false"/>
       </field>
@@ -97,5 +101,44 @@ http://java.sun.com/xml/ns/jdo/jdo_2_0.xsd">
       </field>
     </class>
 
+   <class name="MCrontab" identity-type="application" table="CRONTABS" detachable="true">
+      
+      <field name="id" primary-key="true" value-strategy="identity">
+        <column name="ID" />
+      </field>
+      
+      <field name="name">  
+        <column name="NAME" length="128" jdbc-type="VARCHAR" allows-null="false" />
+      </field>
+      
+      <field name="query">
+        <column name="QUERY" jdbc-type="LONGVARCHAR" allows-null="false" />
+      </field>
+      
+      <field name="callback">
+        <column name="CALLBACK" length="512" jdbc-type="VARCHAR" allows-null="true"/>
+      </field>
+      
+      <field name="crontab">  
+        <column name="CRONTAB" length="128" jdbc-type="VARCHAR" allows-null="false" />
+      </field>
+      
+      <field name="userId">
+        <column name="USER_ID" length="32" jdbc-type="VARCHAR" allows-null="false"/>
+      </field>
+      
+      <field name="created">
+        <column name="CREATED" jdbc-type="TIMESTAMP" allows-null="false"/>
+      </field>
+      
+      <field name="updated">
+        <column name="UPDATED" jdbc-type="TIMESTAMP" allows-null="false"/>
+      </field>
+      
+      <field name="status">
+        <column name="STATUS" length="32" jdbc-type="VARCHAR" allows-null="false"/>
+      </field>
+    </class>
+    
   </package>
 </jdo>

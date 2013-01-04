@@ -1,0 +1,76 @@
+#set($nav='query.list')
+
+<div>
+<a href="/hwi/queries">Quries</a>
+/
+<h2>
+    $query.getName()
+    #if ( !$query.getCrontabId() && $query.getStatus() == "FINISHED" )
+        <a class="pull-right" href="/hwi/crontabs/create?queryId=$query.getId()" title="Crontab It !">
+            <i class="icon-time"></i>
+        </a>
+    #elseif ( $query.getCrontabId() )
+        <a class="pull-right" href="/hwi/crontabs/$query.getCrontabId()" title="Crontab">
+            <i class="icon-time"></i>
+        </a>
+    #end
+</h2>
+</div>
+<hr class="bold">
+    
+<dl class="dl-horizontal">
+    <dt><span class="label #query_status($query.getStatus())">$query.getStatus()</span></dt>
+    <dd>
+        #if($jobInfos)
+        <ul class="unstyled">
+            #foreach($jobInfo in $jobInfos)
+            <li><a href="$jobInfo.get("url")" target="_blank">$jobInfo.get("id")</a></li>
+            #end
+        </ul>
+        #end
+    </dd>
+</dl>
+
+<hr>
+<h3>Basic</h3>
+<hr>
+<dl class="dl-horizontal">
+    <dt>Query</dt>
+    <dd>
+        <pre><code>#alt($query.getQuery() "--")</code></pre>
+    </dd>
+    <dt>Callback</dt>
+    <dd>#alt($query.getCallback() "--")</dd>
+    <dt>Result location</dt>
+    <dd>
+        #if ($query.getStatus() == "FINISHED")
+        $query.getResultLocation()
+        <a class="btn btn-small btn-info" href="/hwi/queries/$query.getId()/result" >View Result</a>
+        #else 
+        --
+        #end
+    </dd>
+    <dt>Error message</dt>
+    <dd>#alt($query.getErrorMsg() "--")</dd>
+    <dt>Error code</dt>
+    <dd>#alt($query.getErrorCode() "--")</dd>
+    <dt>Created</dt>
+    <dd>#alt($createdTime "--")</dd>
+    <dt>Updated</dt>
+    <dd>#alt($updatedTime "--")</dd>
+</dl>
+<hr>
+<h3>Stats</h3>
+<hr>
+<dl class="dl-horizontal">
+    <dt>Cpu Time</dt>
+    <dd>#alt($cpuTime "--")</dd>
+    <dt>Total Time</dt>
+    <dd>#alt($totalTime "--")</dd>
+    #if($savedTime)
+    <dt>Saved Time</dt>
+    <dd>
+        <span class="badge badge-warning">$savedTime</span>
+    </dd>
+    #end
+</dl>

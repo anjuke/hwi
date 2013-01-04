@@ -1,0 +1,79 @@
+#set($nav='query.list')
+
+#macro (pagination)
+<div class="pagination">
+    <ul>
+        <li><span>$pagination.getTotal()</span></li>
+		#set($pages=$pagination.getPages())
+        #if($pages > 0)
+        #foreach( $page in [1..$pages] )
+        <li class="#if($page==$pagination.getPage())active#end">
+            <a href="?#if($crontabId)crontabId=$crontabId&#{end}page=$page&pageSize=$pagination.getPageSize()">$page</a>
+        </li>
+        #end
+        #end
+    </ul>
+</div>
+#end
+
+
+<h2>Queries</h2>
+<hr class="bold">
+	
+<div class="table-pages">
+	
+#pagination
+
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Name</th>
+            <th>Query</th>
+            <th>Status</th>
+            <th>Result</th>
+        </tr>
+    </thead>
+    <tbody>
+        #foreach($query in $pagination.getItems())
+        <tr>
+            <td>$query.getId()</td>
+            <td><a href="/hwi/queries/$query.getId()">$query.getName()</a></td>
+            <td>
+                #if($query.getQuery().length() > 30)
+                #set($shortQuery=$query.getQuery().substring(0,30))
+                #else
+                #set($shortQuery=$query.getQuery())
+                #end
+                <code class="hide">$query.getQuery()</code>
+                <code class="short">$shortQuery</code>
+            </td>
+            <td><span class="label #query_status($query.getStatus())">$query.getStatus()</span></td>
+            <td>
+                #if ($query.getStatus() == "FINISHED")
+                <a href="/hwi/queries/$query.getId()/result" title="view result"><i class="icon-envelope"></i></a>
+				#end
+				
+				#if ($query.getErrorMsg())
+				<i class="icon-warning-sign" title="error"></i>
+				$query.getErrorMsg()
+				#end
+            </td>
+        </tr>
+        #end
+    </tbody>
+</table>
+
+#if($pagination.getItems().size() > 10)
+#pagination
+#end
+
+</div>
+
+<script>
+    $(function(){
+        $('code.short').tooltip({title:function(){
+                return $(this).siblings('code.hide').text()
+        }})
+    })
+</script>

@@ -1,0 +1,15 @@
+#set($nav='schema')
+
+<h2>Database</h2>
+<hr class="bold">
+<table class="table table-bordered table-striped">
+    <tbody>
+    #foreach($db in $dbs)
+    <tr>
+        <td>
+            <a href="/hwi/schema/$db">$db</a>
+        </td>
+    </tr>
+    #end
+    </tbody>
+</table>

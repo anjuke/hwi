@@ -1,159 +1,184 @@
 package org.apache.hadoop.hive.hwi.model;
 
+import java.util.Calendar;
 import java.util.Date;
+import java.util.TimeZone;
 
 public class MQuery {
 
-  public enum Status {INITED, RUNNING, FINISHED, CANCELLED, FAILED, SYNTAXERROR};
+	public static enum Status {
+		INITED, RUNNING, FINISHED, CANCELLED, FAILED, SYNTAXERROR
+	};
 
-  private Integer id;
+	private Integer id;
 
-  private String name;
+	private String name;
 
-  private String query;
+	private String query;
 
-  private String resultLocation;
+	private String resultLocation;
 
-  private Status status;
+	private Status status;
 
-  private String errorMsg;
+	private String errorMsg;
 
-  private Integer errorCode;
+	private Integer errorCode;
 
-  private String description;
+	private String description;
 
-  private String callback;
+	private String callback;
 
-  private String jobId;
+	private String jobId;
 
-  private String userId;
+	private String userId;
+	
+	private Integer crontabId;
 
-  private Date created;
+	private Date created;
 
-  private Date updated;
+	private Date updated;
 
-  private Integer cpuTime;
+	private Integer cpuTime;
 
-  private Integer totalTime;
+	private Integer totalTime;
+	
+	public MQuery(String name, String query, String callback, String userId) {
+		this.name = name;
+		this.query = query;
+		this.callback = callback;
+		this.resultLocation = "";
+		this.created = Calendar.getInstance(TimeZone.getDefault()).getTime();
+		this.updated = this.created;
+		this.status = Status.INITED;
+		this.userId = userId;
+	}
 
-  public String getName() {
-    return name;
-  }
+	public String getName() {
+		return name;
+	}
 
-  public void setName(String name) {
-    this.name = name;
-  }
+	public void setName(String name) {
+		this.name = name;
+	}
 
-  public String getQuery() {
-    return query;
-  }
+	public String getQuery() {
+		return query;
+	}
 
-  public void setQuery(String query) {
-    this.query = query;
-  }
+	public void setQuery(String query) {
+		this.query = query;
+	}
 
-  public String getResultLocation() {
-    return resultLocation;
-  }
+	public String getResultLocation() {
+		return resultLocation;
+	}
 
-  public void setResultLocation(String resultLocation) {
-    this.resultLocation = resultLocation;
-  }
+	public void setResultLocation(String resultLocation) {
+		this.resultLocation = resultLocation;
+	}
 
-  public Status getStatus() {
-    return status;
-  }
+	public Status getStatus() {
+		return status;
+	}
 
-  public void setStatus(Status status) {
-    this.status = status;
-  }
+	public void setStatus(Status status) {
+		this.status = status;
+	}
 
-  public String getErrorMsg() {
-    return errorMsg;
-  }
+	public String getErrorMsg() {
+		return errorMsg;
+	}
 
-  public void setErrorMsg(String errorMsg) {
-    this.errorMsg = errorMsg;
-  }
+	public void setErrorMsg(String errorMsg) {
+		this.errorMsg = errorMsg;
+	}
 
-  public Integer getErrorCode() {
-    return errorCode;
-  }
+	public Integer getErrorCode() {
+		return errorCode;
+	}
 
-  public void setErrorCode(Integer errorCode) {
-    this.errorCode = errorCode;
-  }
+	public void setErrorCode(Integer errorCode) {
+		this.errorCode = errorCode;
+	}
 
-  public String getDescription() {
-    return description;
-  }
+	public String getDescription() {
+		return description;
+	}
 
-  public void setDescription(String description) {
-    this.description = description;
-  }
+	public void setDescription(String description) {
+		this.description = description;
+	}
 
-  public String getCallback() {
-    return callback;
-  }
+	public String getCallback() {
+		return callback;
+	}
 
-  public void setCallback(String callback) {
-    this.callback = callback;
-  }
+	public void setCallback(String callback) {
+		this.callback = callback;
+	}
 
-  public String getUserId() {
-    return userId;
-  }
+	public String getUserId() {
+		return userId;
+	}
 
-  public void setUserId(String userId) {
-    this.userId = userId;
-  }
+	public void setUserId(String userId) {
+		this.userId = userId;
+	}
 
-  public Date getCreated() {
-    return created;
-  }
+	public Integer getCrontabId() {
+		return crontabId;
+	}
 
-  public void setCreated(Date created) {
-    this.created = created;
-  }
+	public void setCrontabId(Integer crontabId) {
+		this.crontabId = crontabId;
+	}
 
-  public Date getUpdated() {
-    return updated;
-  }
+	public Date getCreated() {
+		return created;
+	}
 
-  public void setUpdated(Date updated) {
-    this.updated = updated;
-  }
+	public void setCreated(Date created) {
+		this.created = created;
+	}
 
-  public Integer getId() {
-    return id;
-  }
+	public Date getUpdated() {
+		return updated;
+	}
 
-  public void setId(Integer id) {
-    this.id = id;
-  }
+	public void setUpdated(Date updated) {
+		this.updated = updated;
+	}
 
-  public String getJobId() {
-    return jobId;
-  }
+	public Integer getId() {
+		return id;
+	}
 
-  public void setJobId(String jobId) {
-    this.jobId = jobId;
-  }
+	public void setId(Integer id) {
+		this.id = id;
+	}
 
-  public Integer getCpuTime() {
-    return cpuTime;
-  }
+	public String getJobId() {
+		return jobId;
+	}
 
-  public void setCpuTime(Integer cpuTime) {
-    this.cpuTime = cpuTime;
-  }
+	public void setJobId(String jobId) {
+		this.jobId = jobId;
+	}
 
-  public Integer getTotalTime() {
-    return totalTime;
-  }
+	public Integer getCpuTime() {
+		return cpuTime;
+	}
 
-  public void setTotalTime(Integer totalTime) {
-    this.totalTime = totalTime;
-  }
+	public void setCpuTime(Integer cpuTime) {
+		this.cpuTime = cpuTime;
+	}
+
+	public Integer getTotalTime() {
+		return totalTime;
+	}
+
+	public void setTotalTime(Integer totalTime) {
+		this.totalTime = totalTime;
+	}
 
 }

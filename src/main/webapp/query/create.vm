@@ -1,0 +1,27 @@
+#set($title='query create')
+#set($nav='query.create')
+
+<h2>Create a Hive Query</h2>
+<hr class="bold">
+		
+<form action="" method="post" class="form-horizontal">
+
+		<div class="control-group">
+			<label class="control-label" for="fldquery">Query</label>
+			<div class="controls">
+				<textarea id="query" class="input-block-level" name="query" rows="10" cols="20" placeholder="Enter hive query">$!query</textarea>
+			</div>
+		</div>
+
+		<div class="control-group">
+			<label class="control-label" for="fldquery">Query Name</label>
+			<div class="controls">
+				<input id="name" type="text" name="name" value="$!name" placeholder="Enter query name" />
+			</div>
+		</div>
+
+	<div class="form-actions">
+		<button type="submit" class="btn btn-primary">Submit</button>
+	</div>
+</form>
+
