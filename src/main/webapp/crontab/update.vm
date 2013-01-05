@@ -12,4 +12,4 @@
 #set($month=$tokens[4])
 #set($week=$tokens[5])
 
-#parse('/crontab/crontab_edit_form.vm')
+#parse('/crontab/edit_form.vm')

@@ -4,7 +4,7 @@
 <div class="pagination">
     <ul>
         <li><span>$pagination.getTotal()</span></li>
-		#set($pages=$pagination.getPages())
+        #set($pages=$pagination.getPages())
         #if($pages > 0)
         #foreach( $page in [1..$pages] )
         <li class="#if($page==$pagination.getPage())active#end">
@@ -19,9 +19,9 @@
 
 <h2>Crontabs</h2>
 <hr class="bold">
-	
+
 <div class="table-pages">
-	
+
 #pagination
 
 <table class="table table-bordered table-striped">
@@ -31,8 +31,8 @@
             <th>Name</th>
             <th>Query</th>
             <th>Crontab</th>
-			<th>Status</th>
-			<th>History</th>
+            <th>Status</th>
+            <th>History</th>
         </tr>
     </thead>
     <tbody>
@@ -50,8 +50,8 @@
                 <code class="short">$shortQuery</code>
             </td>
             <td><code>$crontab.getCrontab()</code></td>
-			<td><span class="label #crontab_status($crontab.getStatus())">$crontab.getStatus()</span></td>
-			<td><a href="/hwi/queries?crontabId=$crontab.getId()" title="Query History"><i class="icon-film"></i></a></td>
+            <td><span class="label #crontab_status($crontab.getStatus())">$crontab.getStatus()</span></td>
+            <td><a href="/hwi/queries?crontabId=$crontab.getId()" title="Query History"><i class="icon-film"></i></a></td>
         </tr>
         #end
     </tbody>

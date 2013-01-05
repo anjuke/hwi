@@ -18,6 +18,15 @@ A New Hive Web Interface
 
 * Create crontabs to run queries automatically
 
+## Implemention
+
+Following frameworks are used:
+
+* [Twitter Bootstrap](http://twitter.github.com/bootstrap/) for html, css, js
+* [Velocity](http://velocity.apache.org/) for view templating
+* [Jersey](http://jersey.java.net/) for url routing
+* [Quartz](http://quartz-scheduler.org/) for queries scheduling
+
 ## How to use
 
 **Download**

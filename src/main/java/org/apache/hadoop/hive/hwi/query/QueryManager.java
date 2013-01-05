@@ -9,63 +9,64 @@ import org.apache.hadoop.hive.hwi.model.MQuery;
 
 public class QueryManager {
 
-	protected static final Log l4j = LogFactory.getLog(QueryManager.class
-			.getName());
+    protected static final Log l4j = LogFactory.getLog(QueryManager.class
+            .getName());
 
-	private static QueryManager instance;
+    private static QueryManager instance;
 
-	private ThreadPoolExecutor executor;
-	private QueryMonitor monitor;
+    private ThreadPoolExecutor executor;
+    private QueryMonitor monitor;
 
-	private QueryManager() {
-	}
+    private QueryManager() {
+    }
 
-	public static QueryManager getInstance() {
-		if (instance == null) {
-			synchronized (QueryManager.class) {
-				if (instance == null) {
-					instance = new QueryManager();
-				}
-			}
-		}
-		return instance;
-	}
+    public static QueryManager getInstance() {
+        if (instance == null) {
+            synchronized (QueryManager.class) {
+                if (instance == null) {
+                    instance = new QueryManager();
+                }
+            }
+        }
+        return instance;
+    }
 
-	public void start() {
-		startExecutor();
-		startMonitor();
-		l4j.info("QueryManager created.");
-	}
-	
-	protected void startExecutor() {
-		executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(20);
-		l4j.info("Executor started.");
-	}
+    public void start() {
+        startExecutor();
+        startMonitor();
+        l4j.info("QueryManager created.");
+    }
 
-	protected void startMonitor() {
-		monitor = new QueryMonitor();
-		monitor.start();
-		l4j.info("Monitor started.");
-	}
+    protected void startExecutor() {
+        executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(20);
+        l4j.info("Executor started.");
+    }
 
-	public boolean submit(MQuery mquery) {
-		if (executor == null) return false;
-		
-		QueryWorker worker = new QueryWorker(mquery);
+    protected void startMonitor() {
+        monitor = new QueryMonitor();
+        monitor.start();
+        l4j.info("Monitor started.");
+    }
 
-		executor.execute(worker);
+    public boolean submit(MQuery mquery) {
+        if (executor == null)
+            return false;
 
-		if (monitor != null)
-			monitor.monitor(worker);
+        QueryWorker worker = new QueryWorker(mquery);
 
-		return true;
-	}
+        executor.execute(worker);
 
-	public void shutdown() {
-		if (executor != null)
-			executor.shutdownNow();
-		if (monitor != null)
-			monitor.shutdown();
-		l4j.info("QueryManager shutdown.");
-	}
+        if (monitor != null)
+            monitor.monitor(worker);
+
+        return true;
+    }
+
+    public void shutdown() {
+        if (executor != null)
+            executor.shutdownNow();
+        if (monitor != null)
+            monitor.shutdown();
+        l4j.info("QueryManager shutdown.");
+    }
 }

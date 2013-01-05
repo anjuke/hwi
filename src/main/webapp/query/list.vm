@@ -4,7 +4,7 @@
 <div class="pagination">
     <ul>
         <li><span>$pagination.getTotal()</span></li>
-		#set($pages=$pagination.getPages())
+        #set($pages=$pagination.getPages())
         #if($pages > 0)
         #foreach( $page in [1..$pages] )
         <li class="#if($page==$pagination.getPage())active#end">
@@ -19,9 +19,9 @@
 
 <h2>Queries</h2>
 <hr class="bold">
-	
+    
 <div class="table-pages">
-	
+    
 #pagination
 
 <table class="table table-bordered table-striped">
@@ -52,12 +52,12 @@
             <td>
                 #if ($query.getStatus() == "FINISHED")
                 <a href="/hwi/queries/$query.getId()/result" title="view result"><i class="icon-envelope"></i></a>
-				#end
-				
-				#if ($query.getErrorMsg())
-				<i class="icon-warning-sign" title="error"></i>
-				$query.getErrorMsg()
-				#end
+                #end
+                
+                #if ($query.getErrorMsg())
+                <i class="icon-warning-sign" title="error"></i>
+                $query.getErrorMsg()
+                #end
             </td>
         </tr>
         #end

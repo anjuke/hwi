@@ -17,16 +17,16 @@
 <hr>
 
 <table class="table table-bordered table-striped">
-	<thead>
+    <thead>
         <tr>
             <th>Table</th>
         </tr>
     </thead>
     <tbody>
         #foreach ($table in $tables)
-		<tr>
-        <td><a href="/hwi/schema/$db.getName()/$table">$table</a></td>
+        <tr>
+            <td><a href="/hwi/schema/$db.getName()/$table">$table</a></td>
         </tr>
-		#end
+        #end
     </tbody>
 </table>

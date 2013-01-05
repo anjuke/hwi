@@ -1,15 +1,15 @@
 #macro(alt $a $b)#if($a)$a#{else}$b#end#end
-		
+
 #macro(query_status $status)
 #set($map = {
-	"INITED": "", 
-	"FINISHED": "label-success", 
-	"FAILED": "label-important", 
-	"SYNTAXERROR": "label-warning", 
-	"RUNNING": "label-info"})$map["$status"]#end
+    "INITED": "", 
+    "FINISHED": "label-success", 
+    "FAILED": "label-important", 
+    "SYNTAXERROR": "label-warning", 
+    "RUNNING": "label-info"})$map["$status"]#end
 
 #macro(crontab_status $status)
 #set($map = {
-	"RUNNING": "label-success", 
-	"PAUSED": "label-warning",
-	"DELETED": "label-important"})$map["$status"]#end
+    "RUNNING": "label-success", 
+    "PAUSED": "label-warning",
+    "DELETED": "label-important"})$map["$status"]#end

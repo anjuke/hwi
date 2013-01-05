@@ -14,14 +14,14 @@
         #foreach ($key in $p.keySet())
         <tr>
             <td>$key</td>
-			<td>$p.getProperty($key)</td>
+            <td>$p.getProperty($key)</td>
         </tr>
         #end
     </tbody>
 </table>
 
 <hr>
-	
+
 <h3>System.getenv()</h3>
 <hr>
 <table class="table table-bordered table-striped">
@@ -35,8 +35,8 @@
         #foreach ($key in $env.keySet())
         <tr>
             <td>$key</td>
-			<td>$env.get($key)</td>	
+            <td>$env.get($key)</td>
         </tr>
         #end
-	</tbody>
+    </tbody>
 </table>

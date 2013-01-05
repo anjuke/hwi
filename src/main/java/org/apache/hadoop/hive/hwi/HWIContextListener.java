@@ -28,42 +28,42 @@ import org.apache.hadoop.hive.hwi.query.QueryManager;
 /**
  * After getting a contextInitialized event this component starts an instance of
  * the HiveSessionManager.
- *
+ * 
  */
 public class HWIContextListener implements javax.servlet.ServletContextListener {
 
-  protected static final Log l4j = LogFactory.getLog(HWIContextListener.class
-      .getName());
+    protected static final Log l4j = LogFactory.getLog(HWIContextListener.class
+            .getName());
 
-  /**
-   * The Hive Web Interface manages multiple hive sessions. This event is used
-   * to start a Runnable, QueryManager as a thread inside the servlet
-   * container.
-   *
-   * @param sce
-   *          An event fired by the servlet context on startup
-   */
-  public void contextInitialized(ServletContextEvent sce) {
-    
-    QueryManager.getInstance().start();
-    
-    QueryCron.getInstance().start();
+    /**
+     * The Hive Web Interface manages multiple hive sessions. This event is used
+     * to start a Runnable, QueryManager as a thread inside the servlet
+     * container.
+     * 
+     * @param sce
+     *            An event fired by the servlet context on startup
+     */
+    public void contextInitialized(ServletContextEvent sce) {
 
-  }
+        QueryManager.getInstance().start();
 
-  /**
-   * When the Hive Web Interface is closing we locate the Runnable
-   * HiveSessionManager and set it's internal goOn variable to false. This
-   * should allow the application to gracefully shutdown.
-   *
-   * @param sce
-   *          An event fired by the servlet context on context shutdown
-   */
-  public void contextDestroyed(ServletContextEvent sce) {
-    
-    QueryManager.getInstance().shutdown();
-    
-    QueryCron.getInstance().shutdown();
+        QueryCron.getInstance().start();
 
-  }
+    }
+
+    /**
+     * When the Hive Web Interface is closing we locate the Runnable
+     * HiveSessionManager and set it's internal goOn variable to false. This
+     * should allow the application to gracefully shutdown.
+     * 
+     * @param sce
+     *            An event fired by the servlet context on context shutdown
+     */
+    public void contextDestroyed(ServletContextEvent sce) {
+
+        QueryManager.getInstance().shutdown();
+
+        QueryCron.getInstance().shutdown();
+
+    }
 }

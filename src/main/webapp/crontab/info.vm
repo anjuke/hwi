@@ -44,7 +44,7 @@ $(function(){
 <h3>Basic</h3>
 <hr>
 <dl class="dl-horizontal">
-	<dt>Crontab</dt>
+    <dt>Crontab</dt>
     <dd><code>#alt($crontab.getCrontab() '--')</code></dd>
     <dt>Query</dt>
     <dd><pre><code>#alt($crontab.getQuery() '--')</code></pre></dd>
