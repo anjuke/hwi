@@ -40,7 +40,11 @@ Following frameworks are used:
 
 **Deploy**
 
-    $ cp target/hive-hwi-1.0*.war ${HIVE_HOME}/lib/
+    $ mv ${HIVE_HOME}/lib/hive-hwi-x.jar ${HIVE_HOME}/lib/hive-hwi-x.jar.bak
+    $ mv ${HIVE_HOME}/lib/hive-hwi-x.war ${HIVE_HOME}/lib/hive-hwi-x.war.bak
+
+    $ cp target/hive-hwi-1.0-classes.jar ${HIVE_HOME}/lib/hive-hwi-1.0.jar
+    $ cp target/hive-hwi-1.0.war ${HIVE_HOME}/lib/hive-hwi-1.0.war
 
     **Pay attention!** Maybe you prefer not to simply overide conf/hive-site.xml
   

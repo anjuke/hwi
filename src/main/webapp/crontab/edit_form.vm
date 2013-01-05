@@ -27,9 +27,9 @@
             Examples
             <hr/>
             <p>Suppose at 2012-01-01 12:00:00, the following query was run</p>
-            <pre><code>select {hiveconf:hour} from alog.${esc.d}{hiveconf:year}${esc.d}{hiveconf:month}${esc.d}{hiveconf:day}</code></pre>
+            <pre><code>select ${esc.d}{hiveconf:hour} from alog.d_${esc.d}{hiveconf:year}${esc.d}{hiveconf:month}${esc.d}{hiveconf:day} limit 1</code></pre>
             <p>then it will be processed as </p>
-            <pre><code>select 12 from alog.20120101</code></pre>
+            <pre><code>select 12 from alog.d_20120101 limit 1</code></pre>
             <a href="http://hive.apache.org/docs/r0.9.0/language_manual/var_substitution.html" target="_blank">More</a>
             </div>
         </div>
