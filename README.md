@@ -20,8 +20,23 @@ A New Hive Web Interface
 
 ## How to use
 
+  * Download
+
     $ git clone git@github.com:anjuke/hwi.git
+    
+  * Package
+
     $ cd hwi
     $ mvn clean package
+
+  * Deploy
+
     $ cp target/hive-hwi-1.0*.war ${HIVE_HOME}/lib/
+
+    **Pay attention!** Maybe you prefer not to simply overide conf/hive-site.xml
+    
+    $ cp src/main/resources/hive-site.xml.template ${HIVE_HOME}/conf/hive-site.xml
+    
+  * Run
+
     $ hive --service hwi
