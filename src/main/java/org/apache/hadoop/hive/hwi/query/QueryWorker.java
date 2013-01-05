@@ -12,12 +12,12 @@ import java.util.Date;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.hive.conf.HiveConf;
+import org.apache.hadoop.hive.hwi.HWIHiveHistoryViewer;
 import org.apache.hadoop.hive.hwi.HWIUtil;
 import org.apache.hadoop.hive.hwi.model.MQuery;
 import org.apache.hadoop.hive.hwi.model.MQuery.Status;
 import org.apache.hadoop.hive.ql.CommandNeedRetryException;
 import org.apache.hadoop.hive.ql.Driver;
-import org.apache.hadoop.hive.ql.history.HiveHistoryViewer;
 import org.apache.hadoop.hive.ql.processors.CommandProcessor;
 import org.apache.hadoop.hive.ql.processors.CommandProcessorFactory;
 import org.apache.hadoop.hive.ql.processors.CommandProcessorResponse;
@@ -154,7 +154,7 @@ public class QueryWorker implements Runnable {
     }
 
     protected void running() {
-        HiveHistoryViewer hv = HWIUtil.getHiveHistoryViewer(historyFile);
+        HWIHiveHistoryViewer hv = HWIUtil.getHiveHistoryViewer(historyFile);
 
         String jobId = HWIUtil.getJobId(hv);
 
@@ -172,7 +172,7 @@ public class QueryWorker implements Runnable {
      */
     private void finish() {
 
-        HiveHistoryViewer hv = HWIUtil.getHiveHistoryViewer(historyFile);
+        HWIHiveHistoryViewer hv = HWIUtil.getHiveHistoryViewer(historyFile);
 
         String jobId = HWIUtil.getJobId(hv);
 

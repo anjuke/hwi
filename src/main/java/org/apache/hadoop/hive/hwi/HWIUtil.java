@@ -11,7 +11,6 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hive.conf.HiveConf;
 import org.apache.hadoop.hive.ql.history.HiveHistory.TaskInfo;
-import org.apache.hadoop.hive.ql.history.HiveHistoryViewer;
 import org.apache.hadoop.hive.ql.session.SessionState;
 
 public class HWIUtil {
@@ -80,13 +79,13 @@ public class HWIUtil {
                 + path;
     }
 
-    public static HiveHistoryViewer getHiveHistoryViewer(String historyFile) {
+    public static HWIHiveHistoryViewer getHiveHistoryViewer(String historyFile) {
         if (historyFile == null) {
             return null;
         }
 
         try {
-            HiveHistoryViewer hv = new HWIHiveHistoryViewer(historyFile);
+            HWIHiveHistoryViewer hv = new HWIHiveHistoryViewer(historyFile);
             return hv;
         } catch (Exception e) {
             e.printStackTrace();
@@ -95,7 +94,7 @@ public class HWIUtil {
         }
     }
 
-    public static String getJobId(HiveHistoryViewer hv) {
+    public static String getJobId(HWIHiveHistoryViewer hv) {
         if (hv == null) {
             return null;
         }
@@ -119,7 +118,7 @@ public class HWIUtil {
         return jobId;
     }
 
-    public static Integer getCpuTime(HiveHistoryViewer hv) {
+    public static Integer getCpuTime(HWIHiveHistoryViewer hv) {
         if (hv == null) {
             return null;
         }

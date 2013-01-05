@@ -64,10 +64,6 @@ http://java.sun.com/xml/ns/jdo/jdo_2_0.xsd">
         <column name="ERROR_CODE" jdbc-type="INTEGER" allows-null="true"/>
       </field>
       
-      <field name="description">
-        <column name="DESC" length="400" jdbc-type="VARCHAR" allows-null="true"/>
-      </field>
-      
       <field name="callback">
         <column name="CALLBACK" length="400" jdbc-type="VARCHAR" allows-null="true"/>
       </field>

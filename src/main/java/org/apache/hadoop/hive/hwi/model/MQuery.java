@@ -24,8 +24,6 @@ public class MQuery {
 
     private Integer errorCode;
 
-    private String description;
-
     private String callback;
 
     private String jobId;
@@ -51,6 +49,23 @@ public class MQuery {
         this.updated = this.created;
         this.status = Status.INITED;
         this.userId = userId;
+    }
+
+    public void copy(MQuery mquery) {
+        name = mquery.name;
+        query = mquery.query;
+        callback = mquery.callback;
+        resultLocation = mquery.resultLocation;
+        errorMsg = mquery.errorMsg;
+        errorCode = mquery.errorCode;
+        created = mquery.created;
+        updated = mquery.updated;
+        status = mquery.status;
+        userId = mquery.userId;
+        jobId = mquery.jobId;
+        crontabId = mquery.crontabId;
+        cpuTime = mquery.cpuTime;
+        totalTime = mquery.totalTime;
     }
 
     public String getName() {
@@ -99,14 +114,6 @@ public class MQuery {
 
     public void setErrorCode(Integer errorCode) {
         this.errorCode = errorCode;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     public String getCallback() {

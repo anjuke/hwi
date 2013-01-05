@@ -40,6 +40,17 @@ public class MCrontab {
         this.setStatus(Status.PAUSED);
     }
 
+    public void copy(MCrontab mcrontab) {
+        name = mcrontab.name;
+        query = mcrontab.query;
+        callback = mcrontab.callback;
+        crontab = mcrontab.crontab;
+        created = mcrontab.created;
+        updated = mcrontab.updated;
+        status = mcrontab.status;
+        userId = mcrontab.userId;
+    }
+
     public Integer getId() {
         return id;
     }

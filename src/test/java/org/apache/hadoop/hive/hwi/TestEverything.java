@@ -13,12 +13,16 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Properties;
 
+import javax.jdo.PersistenceManager;
+import javax.jdo.PersistenceManagerFactory;
 import javax.jdo.Query;
+import javax.jdo.Transaction;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hive.conf.HiveConf;
 import org.apache.hadoop.hive.hwi.model.MCrontab;
 import org.apache.hadoop.hive.hwi.model.MQuery;
+import org.apache.hadoop.hive.hwi.model.Pagination;
 import org.apache.hadoop.hive.hwi.query.QueryCron;
 import org.apache.hadoop.hive.hwi.query.QueryManager;
 import org.apache.hadoop.hive.hwi.query.QueryStore;
@@ -124,7 +128,40 @@ public class TestEverything {
         }
     }
 
+    public static void testPersistenceManager() {
+        PersistenceManagerFactory pmf = QueryStore.getInstance().getPMF();
+
+        PersistenceManager pm1 = pmf.getPersistenceManager();
+        System.out.println(pm1);
+
+        MQuery mquery = pm1.getObjectById(MQuery.class, 204);
+        mquery.setCallback("1");
+
+        Transaction tx1 = pm1.currentTransaction();
+        tx1.begin();
+        pm1.makePersistent(mquery);
+        // tx1.commit();
+
+        PersistenceManager pm2 = pmf.getPersistenceManager();
+        System.out.println(pm2);
+
+        mquery.setCallback("2");
+        MQuery mquery1 = pm2.getObjectById(MQuery.class, mquery.getId());
+        mquery1.copy(mquery);
+        Transaction tx2 = pm2.currentTransaction();
+        tx2.begin();
+        pm2.makePersistent(mquery1);
+        tx2.commit();
+
+        PersistenceManager pm3 = pmf.getPersistenceManager();
+        System.out.println(pm3);
+        Query query = pm3.newQuery(MQuery.class);
+        query.setOrdering("id DESC");
+        Pagination<MQuery> p = new Pagination<MQuery>(query, null, 1, 1);
+        System.out.println(p.getItems().get(0).getId());
+    }
+
     public static void main(String[] args) throws Exception {
-        testConcurrent();
+        testPersistenceManager();
     }
 }

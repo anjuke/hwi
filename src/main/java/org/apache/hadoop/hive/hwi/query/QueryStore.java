@@ -1,6 +1,5 @@
 package org.apache.hadoop.hive.hwi.query;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -13,7 +12,6 @@ import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
 import javax.jdo.Query;
 import javax.jdo.Transaction;
-import javax.jdo.datastore.DataStoreCache;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -22,19 +20,10 @@ import org.apache.hadoop.hive.conf.HiveConf;
 import org.apache.hadoop.hive.hwi.model.MCrontab;
 import org.apache.hadoop.hive.hwi.model.MQuery;
 import org.apache.hadoop.hive.hwi.model.Pagination;
-import org.apache.hadoop.hive.metastore.ObjectStore;
-import org.apache.hadoop.hive.metastore.model.MDatabase;
-import org.apache.hadoop.hive.metastore.model.MFieldSchema;
-import org.apache.hadoop.hive.metastore.model.MOrder;
-import org.apache.hadoop.hive.metastore.model.MPartition;
-import org.apache.hadoop.hive.metastore.model.MSerDeInfo;
-import org.apache.hadoop.hive.metastore.model.MStorageDescriptor;
-import org.apache.hadoop.hive.metastore.model.MTable;
-import org.apache.hadoop.hive.metastore.model.MType;
 import org.apache.hadoop.hive.ql.session.SessionState;
 
 public class QueryStore {
-    private static final Log LOG = LogFactory
+    private static final Log l4j = LogFactory
             .getLog(QueryStore.class.getName());
 
     private static QueryStore instance;
@@ -43,24 +32,10 @@ public class QueryStore {
 
     private ThreadLocal<PersistenceManager> pm = new ThreadLocal<PersistenceManager>();
 
-    @SuppressWarnings("rawtypes")
-    private static final Map<String, Class> PINCLASSMAP;
-    static {
-        @SuppressWarnings("rawtypes")
-        Map<String, Class> map = new HashMap<String, Class>();
-        map.put("table", MTable.class);
-        map.put("storagedescriptor", MStorageDescriptor.class);
-        map.put("serdeinfo", MSerDeInfo.class);
-        map.put("partition", MPartition.class);
-        map.put("database", MDatabase.class);
-        map.put("type", MType.class);
-        map.put("fieldschema", MFieldSchema.class);
-        map.put("order", MOrder.class);
-        PINCLASSMAP = Collections.unmodifiableMap(map);
-    }
-
     private QueryStore() {
-        pmf = getPMF();
+        HiveConf hiveConf = new HiveConf(SessionState.class);
+        Properties props = getDataSourceProps(hiveConf);
+        pmf = JDOHelper.getPersistenceManagerFactory(props);
     }
 
     public static QueryStore getInstance() {
@@ -78,7 +53,6 @@ public class QueryStore {
      * Properties specified in hive-default.xml override the properties
      * specified in jpox.properties.
      */
-    @SuppressWarnings("nls")
     private static Properties getDataSourceProps(Configuration conf) {
         Properties prop = new Properties();
 
@@ -89,69 +63,37 @@ public class QueryStore {
                     || e.getKey().contains("jdo")) {
                 Object prevVal = prop.setProperty(e.getKey(),
                         conf.get(e.getKey()));
-                if (LOG.isDebugEnabled()
+                if (l4j.isDebugEnabled()
                         && !e.getKey().equals(
                                 HiveConf.ConfVars.METASTOREPWD.varname)) {
-                    LOG.debug("Overriding " + e.getKey() + " value " + prevVal
+                    l4j.debug("Overriding " + e.getKey() + " value " + prevVal
                             + " from  jpox.properties with " + e.getValue());
                 }
             }
         }
 
-        if (LOG.isDebugEnabled()) {
+        if (l4j.isDebugEnabled()) {
             for (Entry<Object, Object> e : prop.entrySet()) {
                 if (!e.getKey().equals(HiveConf.ConfVars.METASTOREPWD.varname)) {
-                    LOG.debug(e.getKey() + " = " + e.getValue());
+                    l4j.debug(e.getKey() + " = " + e.getValue());
                 }
             }
         }
         return prop;
     }
 
-    private PersistenceManagerFactory getPMF() {
-        HiveConf hiveConf = new HiveConf(SessionState.class);
-        Properties props = getDataSourceProps(hiveConf);
-
-        PersistenceManagerFactory pmf = JDOHelper
-                .getPersistenceManagerFactory(props);
-
-        DataStoreCache dsc = pmf.getDataStoreCache();
-        if (dsc != null) {
-            HiveConf conf = new HiveConf(ObjectStore.class);
-            String objTypes = HiveConf.getVar(conf,
-                    HiveConf.ConfVars.METASTORE_CACHE_PINOBJTYPES);
-            LOG.info("Setting MetaStore object pin classes with hive.metastore.cache.pinobjtypes=\""
-                    + objTypes + "\"");
-            if (objTypes != null && objTypes.length() > 0) {
-                objTypes = objTypes.toLowerCase();
-                String[] typeTokens = objTypes.split(",");
-                for (String type : typeTokens) {
-                    type = type.trim();
-                    if (PINCLASSMAP.containsKey(type)) {
-                        dsc.pinAll(true, PINCLASSMAP.get(type));
-                    } else {
-                        LOG.warn(type
-                                + " is not one of the pinnable object types: "
-                                + org.apache.commons.lang.StringUtils.join(
-                                        PINCLASSMAP.keySet(), " "));
-                    }
-                }
-            }
-        } else {
-            LOG.warn("PersistenceManagerFactory returned null DataStoreCache object. Unable to initialize object pin types defined by hive.metastore.cache.pinobjtypes");
-        }
-
+    public PersistenceManagerFactory getPMF() {
         return pmf;
     }
 
     public PersistenceManager getPM() {
-        if (pm.get() == null) {
-            pm.set(pmf.getPersistenceManager());
+        if (pm.get() == null || pm.get().isClosed()) {
+            pm.set(getPMF().getPersistenceManager());
         }
         return pm.get();
     }
 
-    public void close() {
+    public void shutdown() {
         if (pm.get() != null) {
             pm.get().close();
         }
@@ -175,8 +117,10 @@ public class QueryStore {
      */
     public void updateQuery(MQuery mquery) {
         Transaction tx = getPM().currentTransaction();
+        MQuery query = getPM().getObjectById(MQuery.class, mquery.getId());
+        query.copy(mquery);
         tx.begin();
-        getPM().makePersistent(mquery);
+        getPM().makePersistent(query);
         tx.commit();
     }
 
@@ -243,8 +187,11 @@ public class QueryStore {
         return (List<MCrontab>) query.executeWithMap(map);
     }
 
-    public void updateCrontab(MCrontab crontab) {
+    public void updateCrontab(MCrontab mcrontab) {
         Transaction tx = getPM().currentTransaction();
+        MCrontab crontab = getPM().getObjectById(MCrontab.class,
+                mcrontab.getId());
+        crontab.copy(mcrontab);
         tx.begin();
         getPM().makePersistent(crontab);
         tx.commit();

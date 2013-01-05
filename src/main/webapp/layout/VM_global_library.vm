@@ -1,4 +1,4 @@
-#macro(alt $a $b)#if($a)$a#{else}$b#end#end
+#macro(alt $a $b)#if("$!a"!="")$a#{else}$b#end#end
 
 #macro(query_status $status)
 #set($map = {
