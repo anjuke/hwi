@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -111,7 +112,15 @@ public class TestEverything {
 		System.out.println(ft.format(d));
 	}
 	
+	public static void testConcurrent(){
+		ArrayList<String> l = new ArrayList<String>();
+		l.add("1");
+		for(String s : l){
+			l.remove(s);
+		}
+	}
+	
 	public static void main(String[] args) throws Exception {
-		testDate();
+		testConcurrent();
 	}
 }

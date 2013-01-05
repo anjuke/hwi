@@ -27,11 +27,11 @@
 <table class="table table-bordered table-striped">
     <thead>
         <tr>
-            <th>#</th>
-            <th>Name</th>
-            <th>Query</th>
-            <th>Status</th>
-            <th>Result</th>
+            <th width="1%">#</th>
+            <th width="40%">Name</th>
+            <th width="40%">Query</th>
+            <th width="1%">Status</th>
+            <th width="18%">Result</th>
         </tr>
     </thead>
     <tbody>
