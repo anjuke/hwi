@@ -9,7 +9,10 @@
         <script type="text/javascript" src="/hwi/assets/js/less-1.3.0.min.js"></script>
     </head>
     <body>
-        <div id="sidebar" class="thumbnail">
+        <div class="container-fluid">
+        <div class="row-fluid">
+
+        <div id="sidebar" class="thumbnail span2">
             <img src="/hwi/assets/img/flash.png"/>
             <h3>HWI</h3>
             <hr/>
@@ -39,18 +42,19 @@
             </ul>
         </div>
         
-        <div id="body">
-            <div class="container">
+        <div id="body" class="span10">
 
-                #if($msg)
-                <div class="alert alert-#alt($type 'error')">
-                    <button type="button" class="close" data-dismiss="alert">&times;</button>
-                    $msg
-                </div>
-                #end
-            
-                $screen_content
+            #if($msg)
+            <div class="alert alert-#alt($type 'error')">
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                $msg
             </div>
+            #end
+        
+            $screen_content
+        </div>
+
+        </div>
         </div>
 
     </body>
