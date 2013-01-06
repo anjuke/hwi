@@ -27,11 +27,11 @@
 <table class="table table-bordered table-striped">
     <thead>
         <tr>
-            <th width="1%">#</th>
-            <th width="40%">Name</th>
-            <th width="40%">Query</th>
-            <th width="1%">Status</th>
-            <th width="18%">Result</th>
+            <th>#</th>
+            <th>Name</th>
+            <th>Query</th>
+            <th>Status</th>
+            <th>Result</th>
         </tr>
     </thead>
     <tbody>
@@ -51,12 +51,11 @@
             <td><span class="label #query_status($query.getStatus())">$query.getStatus()</span></td>
             <td>
                 #if ($query.getStatus() == "FINISHED")
-                <a href="/hwi/queries/$query.getId()/result" title="view result"><i class="icon-envelope"></i></a>
+                <a  class="btn btn-mini" href="/hwi/queries/$query.getId()/result" title="view result"><i class="icon-envelope"></i></a>
                 #end
                 
                 #if ($query.getErrorMsg())
-                <i class="icon-warning-sign" title="error"></i>
-                $query.getErrorMsg()
+                <a class="btn btn-mini btn-danger" href="/hwi/queries/$query.getId()" title="view error"><i class="icon-warning-sign"></i></a>
                 #end
             </td>
         </tr>

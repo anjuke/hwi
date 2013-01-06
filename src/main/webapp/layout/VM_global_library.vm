@@ -2,7 +2,7 @@
 
 #macro(query_status $status)
 #set($map = {
-    "INITED": "", 
+    "INITED": "",
     "FINISHED": "label-success", 
     "FAILED": "label-important", 
     "SYNTAXERROR": "label-warning", 
@@ -10,6 +10,6 @@
 
 #macro(crontab_status $status)
 #set($map = {
-    "RUNNING": "label-success", 
+    "RUNNING": "label-info",
     "PAUSED": "label-warning",
     "DELETED": "label-important"})$map["$status"]#end

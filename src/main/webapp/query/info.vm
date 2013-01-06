@@ -44,14 +44,19 @@
     <dt>Result location</dt>
     <dd>
         #if ($query.getStatus() == "FINISHED")
-        $query.getResultLocation()
         <a class="btn btn-small btn-info" href="/hwi/queries/$query.getId()/result" >View Result</a>
         #else 
         --
         #end
     </dd>
     <dt>Error message</dt>
-    <dd>#alt($query.getErrorMsg() "--")</dd>
+    <dd>
+        #if($query.getErrorMsg())
+        <span class="label label-important">$query.getErrorMsg()</span>
+        #else
+        --
+        #end
+    </dd>
     <dt>Error code</dt>
     <dd>#alt($query.getErrorCode() "--")</dd>
     <dt>Created</dt>
