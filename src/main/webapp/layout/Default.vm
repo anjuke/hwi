@@ -20,6 +20,7 @@
             <img src="/hwi/assets/img/flash.png"/>
             <h3>HWI</h3>
             <hr/>
+            #if(!$nav) #set($nav = "") #end
             <ul class="nav nav-list">
                 <li class="nav-header">Database</li>
                 <li #if($nav=='schema')class="active"#end>
