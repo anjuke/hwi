@@ -5,12 +5,12 @@
 /
 <h2>
     $query.getName()
-    #if ( !$query.getCrontabId() && $query.getStatus() == "FINISHED" )
-        <a class="pull-right" href="/hwi/crontabs/create?queryId=$query.getId()" title="Crontab It !">
+    #if ( $query.getCrontabId() )
+        <a class="pull-right btn" href="/hwi/crontabs/$query.getCrontabId()" title="Crontab">
             <i class="icon-time"></i>
         </a>
-    #elseif ( $query.getCrontabId() )
-        <a class="pull-right" href="/hwi/crontabs/$query.getCrontabId()" title="Crontab">
+    #elseif ( $query.getStatus() == "FINISHED" )
+        <a class="pull-right btn" href="/hwi/crontabs/create?queryId=$query.getId()" title="Crontab It !">
             <i class="icon-time"></i>
         </a>
     #end
@@ -37,7 +37,7 @@
 <dl class="dl-horizontal">
     <dt>Query</dt>
     <dd>
-        <pre><code>#alt($query.getQuery() "--")</code></pre>
+        <pre class="long-query"><code class="sql">#alt($query.getQuery() "--")</code></pre>
     </dd>
     <dt>Callback</dt>
     <dd>#alt($query.getCallback() "--")</dd>
@@ -49,7 +49,7 @@
         --
         #end
     </dd>
-    <dt>Error message</dt>
+    <dt id="error-msg">Error message</dt>
     <dd>
         #if($query.getErrorMsg())
         <span class="label label-important">$query.getErrorMsg()</span>

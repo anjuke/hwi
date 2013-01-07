@@ -12,7 +12,7 @@
 <dt>Location</dt>
 <dd>$query.getResultLocation()</dd>
 <dt>DownLoad</dt>
-<dd><a href="/hwi/queries/$query.getId()/result?raw=true"><i class="icon-download-alt"></i> File</a></dd>
+<dd><a class="btn btn-small" href="/hwi/queries/$query.getId()/result?raw=true"><i class="icon-download-alt"></i></a></dd>
 </dl>
 
 <hr/>

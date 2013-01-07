@@ -1,28 +1,11 @@
 #set($nav='crontab.list')
 
-#macro (pagination)
-<div class="pagination">
-    <ul>
-        <li><span>$pagination.getTotal()</span></li>
-        #set($pages=$pagination.getPages())
-        #if($pages > 0)
-        #foreach( $page in [1..$pages] )
-        <li class="#if($page==$pagination.getPage())active#end">
-            <a href="?page=$page&pageSize=$pagination.getPageSize()">$page</a>
-        </li>
-        #end
-        #end
-    </ul>
-</div>
-#end
-
-
 <h2>Crontabs</h2>
 <hr class="bold">
 
 <div class="table-pages">
 
-#pagination
+#pagination( $pagination "" )
 
 <table class="table table-bordered table-striped">
     <thead>
@@ -46,27 +29,19 @@
                 #else
                 #set($shortQuery=$crontab.getQuery())
                 #end
-                <code class="hide">$crontab.getQuery()</code>
-                <code class="short">$shortQuery</code>
+                <pre class="long-query hide">$crontab.getQuery()</pre>
+                <pre class="short-query"><code class="sql">$shortQuery</code></pre>
             </td>
             <td><code>$crontab.getCrontab()</code></td>
             <td><span class="label #crontab_status($crontab.getStatus())">$crontab.getStatus()</span></td>
-            <td><a href="/hwi/queries?crontabId=$crontab.getId()" title="Query History"><i class="icon-film"></i></a></td>
+            <td><a class="btn btn-mini" href="/hwi/queries?crontabId=$crontab.getId()" title="Query History"><i class="icon-film"></i></a></td>
         </tr>
         #end
     </tbody>
 </table>
 
 #if($pagination.getItems().size() > 10)
-#pagination
+#pagination( $pagination "" )
 #end
 
 </div>
-
-<script>
-    $(function(){
-        $('code.short').tooltip({title:function(){
-                return $(this).siblings('code.hide').text()
-        }})
-    })
-</script>

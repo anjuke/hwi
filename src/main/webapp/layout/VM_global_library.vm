@@ -13,3 +13,19 @@
     "RUNNING": "label-info",
     "PAUSED": "label-warning",
     "DELETED": "label-important"})$map["$status"]#end
+
+#macro (pagination $pagination $urlQuery)
+<div class="pagination">
+    <ul>
+        <li><span>$pagination.getTotal()</span></li>
+        #set($pages=$pagination.getPages())
+        #if($pages > 0)
+        #foreach( $page in [1..$pages] )
+        <li class="#if($page==$pagination.getPage())active#end">
+            <a href="?#if($!urlQuery != '')$urlQuery&#{end}page=$page&pageSize=$pagination.getPageSize()">$page</a>
+        </li>
+        #end
+        #end
+    </ul>
+</div>
+#end

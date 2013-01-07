@@ -1,28 +1,17 @@
 #set($nav='query.list')
 
-#macro (pagination)
-<div class="pagination">
-    <ul>
-        <li><span>$pagination.getTotal()</span></li>
-        #set($pages=$pagination.getPages())
-        #if($pages > 0)
-        #foreach( $page in [1..$pages] )
-        <li class="#if($page==$pagination.getPage())active#end">
-            <a href="?#if($crontabId)crontabId=$crontabId&#{end}page=$page&pageSize=$pagination.getPageSize()">$page</a>
-        </li>
-        #end
-        #end
-    </ul>
-</div>
+#if($crontabId)
+    #set($urlQuery = "crontabId=$crontabId")
+#else
+    #set($urlQuery = "")
 #end
-
 
 <h2>Queries</h2>
 <hr class="bold">
     
 <div class="table-pages">
     
-#pagination
+#pagination( $pagination $urlQuery )
 
 <table class="table table-bordered table-striped">
     <thead>
@@ -45,8 +34,8 @@
                 #else
                 #set($shortQuery=$query.getQuery())
                 #end
-                <code class="hide">$query.getQuery()</code>
-                <code class="short">$shortQuery</code>
+                <pre class="long-query hide">$query.getQuery()</pre>
+                <pre class="short-query"><code class="sql">$shortQuery</code></pre>
             </td>
             <td><span class="label #query_status($query.getStatus())">$query.getStatus()</span></td>
             <td>
@@ -55,7 +44,7 @@
                 #end
                 
                 #if ($query.getErrorMsg())
-                <a class="btn btn-mini btn-danger" href="/hwi/queries/$query.getId()" title="view error"><i class="icon-warning-sign"></i></a>
+                <a class="btn btn-mini btn-danger" href="/hwi/queries/$query.getId()#error-msg" title="view error"><i class="icon-warning-sign"></i></a>
                 #end
             </td>
         </tr>
@@ -64,15 +53,7 @@
 </table>
 
 #if($pagination.getItems().size() > 10)
-#pagination
+#pagination( $pagination $urlQuery ) 
 #end
 
 </div>
-
-<script>
-    $(function(){
-        $('code.short').tooltip({title:function(){
-                return $(this).siblings('code.hide').text()
-        }})
-    })
-</script>

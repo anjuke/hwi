@@ -3,24 +3,26 @@
 <div>
 <a href="/hwi/crontabs">Crontabs</a>
 /
-<h2>$crontab.getName()<a class="pull-right" href="/hwi/queries?crontabId=$crontab.getId()" title="Query History"><i class="icon-film"></i></a></h2>
+<h2>$crontab.getName()<a class="pull-right btn btn-mini" href="/hwi/queries?crontabId=$crontab.getId()" title="Query History"><i class="icon-film"></i></a></h2>
 </div>
 <hr class="bold">
     
 <dl class="dl-horizontal">
     <dt><span class="label #crontab_status($crontab.getStatus())">$crontab.getStatus()</span></dt>
     <dd>
+        <a class="btn btn-mini" href="/hwi/crontabs/$crontab.getId()/update" title="edit"><i class="icon-edit"></i></a>
+        
         #if ( $crontab.getStatus() == 'RUNNING' || $crontab.getStatus() == 'DELETED')
-        <a class="crontab-action" href="/hwi/crontabs/$crontab.getId()/changeStatus/paused" title="pause"><i class="icon-pause"></i></a>
+        <a class="crontab-action btn btn-mini btn-warning" style="margin-left:10px;" href="/hwi/crontabs/$crontab.getId()/changeStatus/paused" title="pause"><i class="icon-pause"></i></a>
         #end
         
         #if ( $crontab.getStatus() == 'PAUSED')
-        <a class="crontab-action" href="/hwi/crontabs/$crontab.getId()/changeStatus/running" title="run"><i class="icon-time"></i></a>
+        <a class="crontab-action btn btn-mini" style="margin-left:10px;" href="/hwi/crontabs/$crontab.getId()/changeStatus/running" title="run"><i class="icon-time"></i></a>
         #end
         
         #if ( $crontab.getStatus() == 'RUNNING' || $crontab.getStatus() == 'PAUSED')
-        <a style="margin-left:10px;" href="/hwi/crontabs/$crontab.getId()/update" title="edit"><i class="icon-edit"></i></a>
-        <a class="crontab-action" style="margin-left:10px;" href="/hwi/crontabs/$crontab.getId()/changeStatus/deleted" title="delete"><i class="icon-trash"></i></a>
+        
+        <a class="crontab-action btn btn-mini btn-danger" style="margin-left:10px;" href="/hwi/crontabs/$crontab.getId()/changeStatus/deleted" title="delete"><i class="icon-trash"></i></a>
         #end
         
     </dd>
@@ -45,9 +47,9 @@ $(function(){
 <hr>
 <dl class="dl-horizontal">
     <dt>Crontab</dt>
-    <dd><code>#alt($crontab.getCrontab() '--')</code></dd>
+    <dd><code>$crontab.getCrontab()</code></dd>
     <dt>Query</dt>
-    <dd><pre><code>#alt($crontab.getQuery() '--')</code></pre></dd>
+    <dd><pre class="long-query"><code class="sql">$crontab.getQuery()</code></pre></dd>
     <dt>Callback</dt>
     <dd>#alt($crontab.getCallback() '--')</dd>
     <dt>Created</dt>
