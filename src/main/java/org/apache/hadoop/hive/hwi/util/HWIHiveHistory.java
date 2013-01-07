@@ -1,4 +1,4 @@
-package org.apache.hadoop.hive.hwi;
+package org.apache.hadoop.hive.hwi.util;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;

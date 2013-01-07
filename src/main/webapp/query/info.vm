@@ -37,7 +37,9 @@
 <dl class="dl-horizontal">
     <dt>Query</dt>
     <dd>
-        <pre class="long-query"><code class="sql">#alt($query.getQuery() "--")</code></pre>
+        #shortQuery($query.getQuery())
+        <pre class="short-query toggle" title="click to see full query"><code class="sql">$shortQuery</code></pre>
+        <pre class="long-query hide"><code class="sql">$query.getQuery()</code></pre>
     </dd>
     <dt>Callback</dt>
     <dd>#alt($query.getCallback() "--")</dd>

@@ -24,7 +24,7 @@ import org.apache.hadoop.hive.hwi.model.MCrontab;
 import org.apache.hadoop.hive.hwi.model.MCrontab.Status;
 import org.apache.hadoop.hive.hwi.model.MQuery;
 import org.apache.hadoop.hive.hwi.model.Pagination;
-import org.apache.hadoop.hive.hwi.query.QueryCron;
+import org.apache.hadoop.hive.hwi.query.QueryManager;
 import org.apache.hadoop.hive.hwi.query.QueryStore;
 import org.quartz.CronExpression;
 
@@ -155,7 +155,7 @@ public class RCrontab extends RBase {
 				"hadoop");
 		qs.insertCrontab(mcrontab);
 
-		QueryCron.getInstance().schedule(mcrontab);
+		QueryManager.getInstance().schedule(mcrontab);
 
 		throw new WebApplicationException(Response.seeOther(
 				URI.create("crontabs/" + mcrontab.getId())).build());
@@ -190,13 +190,13 @@ public class RCrontab extends RBase {
 
 		switch (s) {
 		case RUNNING:
-			QueryCron.getInstance().schedule(crontab);
+			QueryManager.getInstance().schedule(crontab);
 			break;
 		case PAUSED:
-			QueryCron.getInstance().unschedule(crontab);
+			QueryManager.getInstance().unschedule(crontab);
 			break;
 		case DELETED:
-			QueryCron.getInstance().unschedule(crontab);
+			QueryManager.getInstance().unschedule(crontab);
 			break;
 		}
 
@@ -305,8 +305,8 @@ public class RCrontab extends RBase {
 		qs.updateCrontab(mcrontab);
 
 		if(mcrontab.getStatus() == Status.RUNNING){
-			QueryCron.getInstance().unschedule(mcrontab);
-			QueryCron.getInstance().schedule(mcrontab);
+			QueryManager.getInstance().unschedule(mcrontab);
+			QueryManager.getInstance().schedule(mcrontab);
 		}
 
 		throw new WebApplicationException(Response.seeOther(

@@ -21,8 +21,12 @@ $(function(){
     
 
     /* short query tooltip */
-    $('.short-query').tooltip({title:function(){
+    $('.short-query.tip').tooltip({title:function(){
     	return $(this).siblings('.long-query').text()
     }})
     
+    /* short query toggle */
+    $('.short-query.toggle').click(function(){
+    	return $(this).siblings('.long-query').toggle()
+    })
 });

@@ -30,11 +30,11 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.hive.conf.HiveConf;
-import org.apache.hadoop.hive.hwi.HWIUtil;
 import org.apache.hadoop.hive.hwi.model.MQuery;
 import org.apache.hadoop.hive.hwi.model.Pagination;
 import org.apache.hadoop.hive.hwi.query.QueryManager;
 import org.apache.hadoop.hive.hwi.query.QueryStore;
+import org.apache.hadoop.hive.hwi.util.HadoopUtil;
 import org.apache.hadoop.hive.ql.exec.Utilities;
 import org.apache.hadoop.hive.ql.session.SessionState;
 
@@ -90,7 +90,7 @@ public class RQuery extends RBase {
 					continue;
 				HashMap<String, Object> map = new HashMap<String, Object>();
 				map.put("id", jobId);
-				map.put("url", HWIUtil.getJobTrackerURL(jobId));
+				map.put("url", HadoopUtil.getJobTrackerURL(jobId));
 				jobInfos.add(map);
 			}
 			request.setAttribute("jobInfos", jobInfos);

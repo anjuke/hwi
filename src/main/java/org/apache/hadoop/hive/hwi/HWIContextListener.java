@@ -22,7 +22,6 @@ import javax.servlet.ServletContextEvent;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.hadoop.hive.hwi.query.QueryCron;
 import org.apache.hadoop.hive.hwi.query.QueryManager;
 
 /**
@@ -47,8 +46,6 @@ public class HWIContextListener implements javax.servlet.ServletContextListener 
 
         QueryManager.getInstance().start();
 
-        QueryCron.getInstance().start();
-
     }
 
     /**
@@ -62,8 +59,6 @@ public class HWIContextListener implements javax.servlet.ServletContextListener 
     public void contextDestroyed(ServletContextEvent sce) {
 
         QueryManager.getInstance().shutdown();
-
-        QueryCron.getInstance().shutdown();
 
     }
 }

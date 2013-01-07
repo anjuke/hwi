@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package org.apache.hadoop.hive.hwi;
+package org.apache.hadoop.hive.hwi.util;
 
 import java.io.IOException;
 import java.util.HashMap;

@@ -29,3 +29,13 @@
     </ul>
 </div>
 #end
+
+#macro (shortQuery $query)
+    #if($query.length() > 30)
+        #set($shortQuery=$query.substring(0,30))
+    #else
+        #set($shortQuery=$query)
+    #end
+
+    #set($shortQuery=$shortQuery.replaceAll("\r|\n", " "))
+#end

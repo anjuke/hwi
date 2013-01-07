@@ -10,57 +10,63 @@ public class QueryMonitor implements Runnable {
     protected static final Log l4j = LogFactory.getLog(QueryMonitor.class
             .getName());
 
-    private boolean goOn;
-    private LinkedBlockingQueue<QueryWorker> workers;
+    private LinkedBlockingQueue<QueryRunner> runners;
+
+    private Thread t;
 
     protected QueryMonitor() {
-        goOn = false;
-        workers = new LinkedBlockingQueue<QueryWorker>();
+        runners = new LinkedBlockingQueue<QueryRunner>();
     }
 
     public void start() {
-        goOn = true;
-        Thread t = new Thread(this);
+        t = new Thread(this);
         t.start();
     }
 
     public void run() {
         l4j.info("QueryMonitor started.");
-        while (goOn) {
-            try {
-                // blocking if no more worker
-                QueryWorker worker = workers.take();
 
-                Status status = worker.getStatus();
+        while (true) {
+            try {
+                // blocking if no more runner
+                QueryRunner runner = runners.take();
+
+                Status status = runner.getStatus();
                 switch (status) {
                 case INITED:
-                    l4j.debug("find inited worker");
-                    workers.put(worker);
+                    l4j.debug("find inited runner");
+                    runners.put(runner);
                     break;
                 case RUNNING:
-                    worker.running();
-                    workers.put(worker);
+                    runner.running();
+                    runners.put(runner);
                     break;
                 default:
-                    l4j.debug("remove worker:" + status);
+                    l4j.debug("remove runner:" + status);
                     break;
                 }
 
                 l4j.debug("go to sleep...");
                 Thread.sleep(100);
             } catch (InterruptedException e) {
-                l4j.error(e.getMessage());
+                return;
             }
         }
 
-        l4j.info("QueryMonitor stopped.");
     }
 
-    public boolean monitor(QueryWorker worker) {
-        return workers.offer(worker);
+    public boolean monitor(QueryRunner runner) {
+        return runners.offer(runner);
     }
 
     public void shutdown() {
-        this.goOn = false;
+        l4j.info("QueryMonitor shutting down.");
+        try {
+            t.interrupt();
+            t.join(100);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        l4j.info("QueryMonitor shutdown complete.");
     }
 }

@@ -49,7 +49,11 @@ $(function(){
     <dt>Crontab</dt>
     <dd><code>$crontab.getCrontab()</code></dd>
     <dt>Query</dt>
-    <dd><pre class="long-query"><code class="sql">$crontab.getQuery()</code></pre></dd>
+    <dd>
+        #shortQuery($crontab.getQuery())
+        <pre class="short-query toggle" title="click to see full query"><code class="sql">$shortQuery</code></pre>
+        <pre class="long-query hide"><code class="sql">$crontab.getQuery()</code></pre>
+    </dd>
     <dt>Callback</dt>
     <dd>#alt($crontab.getCallback() '--')</dd>
     <dt>Created</dt>

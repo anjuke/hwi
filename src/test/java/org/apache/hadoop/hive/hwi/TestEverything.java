@@ -23,15 +23,17 @@ import org.apache.hadoop.hive.conf.HiveConf;
 import org.apache.hadoop.hive.hwi.model.MCrontab;
 import org.apache.hadoop.hive.hwi.model.MQuery;
 import org.apache.hadoop.hive.hwi.model.Pagination;
-import org.apache.hadoop.hive.hwi.query.QueryCron;
 import org.apache.hadoop.hive.hwi.query.QueryManager;
 import org.apache.hadoop.hive.hwi.query.QueryStore;
+import org.apache.hadoop.hive.hwi.util.HadoopUtil;
+import org.apache.hadoop.hive.hwi.util.QueryUtil;
 import org.apache.hadoop.hive.ql.session.SessionState;
 
 public class TestEverything {
 
     public static void testHistoryFile() throws IOException {
-        HWIUtil.getHiveHistoryViewer("/tmp/hadoop/hive_job_log_hadoop_201212280953_1889961092.txt");
+        QueryUtil
+                .getHiveHistoryViewer("/tmp/hadoop/hive_job_log_hadoop_201212280953_1889961092.txt");
     }
 
     public static String readFile(String path) throws IOException {
@@ -49,11 +51,11 @@ public class TestEverything {
     }
 
     public static void testGetJobTrackerURL() {
-        System.out.println(HWIUtil.getJobTrackerURL("aa"));
+        System.out.println(HadoopUtil.getJobTrackerURL("aa"));
     }
 
     public static void testGetDataNodeURL() {
-        System.out.println(HWIUtil.getDataNodeURL("/tmp"));
+        System.out.println(HadoopUtil.getDataNodeURL("/tmp"));
     }
 
     public static void testHiveConf() {
@@ -86,9 +88,9 @@ public class TestEverything {
         MCrontab ct = new MCrontab("test-query", "select * from test", "",
                 "*/10 * * * * ?", "hadoop");
         QueryStore.getInstance().insertCrontab(ct);
-        QueryCron.getInstance().schedule(ct);
+        QueryManager.getInstance().schedule(ct);
         Thread.sleep(30000);
-        QueryCron.getInstance().shutdown();
+        QueryManager.getInstance().shutdown();
         QueryManager.getInstance().shutdown();
     }
 
@@ -161,7 +163,31 @@ public class TestEverything {
         System.out.println(p.getItems().get(0).getId());
     }
 
+    public static void testValidateQuery() {
+        try {
+            // QueryUtil.validateQuery("add jar 1.jar;select * from test;select * from xx;");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void testStartStop() {
+        QueryManager.getInstance().start();
+        QueryManager.getInstance().shutdown();
+    }
+
+    public static void testProp() {
+        Properties props = new Properties();
+
+        props.put("org.quartz.threadPool.threadCount", "20");
+        System.out.println(props
+                .getProperty("org.quartz.threadPool.threadCount"));
+        props.setProperty("org.quartz.threadPool.threadCount", "20");
+        System.out.println(props
+                .getProperty("org.quartz.threadPool.threadCount"));
+    }
+
     public static void main(String[] args) throws Exception {
-        testPersistenceManager();
+        testProp();
     }
 }

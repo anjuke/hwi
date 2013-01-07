@@ -29,14 +29,9 @@
             <td>$query.getId()</td>
             <td><a href="/hwi/queries/$query.getId()">$query.getName()</a></td>
             <td>
-                #if($query.getQuery().length() > 30)
-                #set($shortQuery=$query.getQuery().substring(0,30))
-                #else
-                #set($shortQuery=$query.getQuery())
-                #end
-                #set($shortQuery=$shortQuery.replaceAll("\r|\n", " "))
-                <pre class="long-query hide">$query.getQuery()</pre>
-                <pre class="short-query"><code class="sql">$shortQuery</code></pre>
+                #shortQuery($query.getQuery())
+                <pre class="short-query tip"><code class="sql">$shortQuery</code></pre>
+                <pre class="long-query hide"><code class="sql">$query.getQuery()</code></pre>
             </td>
             <td><span class="label #query_status($query.getStatus())">$query.getStatus()</span></td>
             <td>

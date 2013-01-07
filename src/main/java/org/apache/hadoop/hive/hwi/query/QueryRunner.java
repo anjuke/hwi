@@ -6,27 +6,31 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.hive.conf.HiveConf;
-import org.apache.hadoop.hive.hwi.HWIHiveHistoryViewer;
-import org.apache.hadoop.hive.hwi.HWIUtil;
 import org.apache.hadoop.hive.hwi.model.MQuery;
 import org.apache.hadoop.hive.hwi.model.MQuery.Status;
+import org.apache.hadoop.hive.hwi.util.HWIHiveHistoryViewer;
+import org.apache.hadoop.hive.hwi.util.QueryUtil;
 import org.apache.hadoop.hive.ql.CommandNeedRetryException;
 import org.apache.hadoop.hive.ql.Driver;
 import org.apache.hadoop.hive.ql.processors.CommandProcessor;
 import org.apache.hadoop.hive.ql.processors.CommandProcessorFactory;
 import org.apache.hadoop.hive.ql.processors.CommandProcessorResponse;
 import org.apache.hadoop.hive.ql.session.SessionState;
+import org.quartz.Job;
+import org.quartz.JobDataMap;
+import org.quartz.JobExecutionContext;
+import org.quartz.JobExecutionException;
 
-public class QueryWorker implements Runnable {
-
-    protected static final Log l4j = LogFactory.getLog(QueryWorker.class
+public class QueryRunner implements Job {
+    protected static final Log l4j = LogFactory.getLog(QueryRunner.class
             .getName());
+
+    private JobExecutionContext context;
 
     private MQuery mquery;
 
@@ -36,67 +40,56 @@ public class QueryWorker implements Runnable {
 
     private String historyFile;
 
-    public QueryWorker(MQuery mquery) {
-        this.mquery = mquery;
+    @Override
+    public void execute(JobExecutionContext context)
+            throws JobExecutionException {
+        this.context = context;
+
+        if (init()) {
+            QueryManager.getInstance().monitor(this);
+
+            runQuery();
+            finish();
+        }
     }
 
-    public void run() {
-        init();
-        runQueries();
-        finish();
-    }
-
-    protected Status getStatus() {
-        return mquery.getStatus();
-    }
-
-    private void init() {
+    protected boolean init() {
         hiveConf = new HiveConf(SessionState.class);
 
         SessionState.start(hiveConf);
         historyFile = SessionState.get().getHiveHistory().getHistFileName();
 
         qs = QueryStore.getInstance();
+
+        JobDataMap map = context.getJobDetail().getJobDataMap();
+
+        int mqueryId = map.getIntValue("mqueryId");
+
+        mquery = QueryStore.getInstance().getById(mqueryId);
+
+        if (mquery == null) {
+            l4j.error("MQuery<" + mqueryId + "> is missing");
+            return false;
+        }
+
+        return true;
     }
 
     /**
      * run user input queries
      */
-    public void runQueries() {
+    public void runQuery() {
         mquery.setResultLocation("/user/hive/result/" + mquery.getId() + "/");
         mquery.setStatus(MQuery.Status.RUNNING);
         qs.updateQuery(mquery);
 
-        ArrayList<String> queries = new ArrayList<String>();
-
-        // query is not safe ! safe it !
-        String queryStr = HWIUtil.getSafeQuery(mquery.getQuery());
-
-        if (queryStr.contains("hiveconf")) {
-            Date d = new Date();
-            SimpleDateFormat ft = new SimpleDateFormat("yyyy");
-            queries.add("set year=" + ft.format(d));
-            ft = new SimpleDateFormat("MM");
-            queries.add("set month=" + ft.format(d));
-            ft = new SimpleDateFormat("dd");
-            queries.add("set day=" + ft.format(d));
-            ft = new SimpleDateFormat("HH");
-            queries.add("set hour=" + ft.format(d));
-            ft = new SimpleDateFormat("mm");
-            queries.add("set minute=" + ft.format(d));
-            ft = new SimpleDateFormat("ss");
-            queries.add("set second=" + ft.format(d));
-        }
-
-        queries.addAll(Arrays.asList(queryStr.split(";")));
+        ArrayList<String> cmds = queryToCmds(mquery.getQuery(),
+                mquery.getResultLocation());
 
         long start_time = System.currentTimeMillis();
-        for (String query : queries) {
-            if ("".equals(query))
-                continue;
+        for (String cmd : cmds) {
             try {
-                CommandProcessorResponse resp = runQuery(query,
-                        mquery.getResultLocation());
+                CommandProcessorResponse resp = runCmd(cmd);
                 mquery.setErrorMsg(resp.getErrorMessage());
                 mquery.setErrorCode(resp.getResponseCode());
             } catch (Exception e) {
@@ -111,16 +104,47 @@ public class QueryWorker implements Runnable {
         qs.updateQuery(mquery);
     }
 
-    protected CommandProcessorResponse runQuery(String cmd,
-            String resultLocation) throws RuntimeException,
-            CommandNeedRetryException {
-        String cmd_trimmed = cmd.trim();
-        String[] tokens = cmd_trimmed.split("\\s+");
+    protected ArrayList<String> queryToCmds(String query, String resultLocation) {
+        ArrayList<String> cmds = new ArrayList<String>();
 
-        if ("select".equalsIgnoreCase(tokens[0])) {
-            cmd_trimmed = "INSERT OVERWRITE DIRECTORY '" + resultLocation
-                    + "' " + cmd_trimmed;
+        // query is not safe ! safe it !
+        String safeQuery = QueryUtil.getSafeQuery(query);
+
+        if (safeQuery.contains("hiveconf")) {
+            Date d = new Date();
+            SimpleDateFormat ft = new SimpleDateFormat("yyyy");
+            cmds.add("set year=" + ft.format(d));
+            ft = new SimpleDateFormat("MM");
+            cmds.add("set month=" + ft.format(d));
+            ft = new SimpleDateFormat("dd");
+            cmds.add("set day=" + ft.format(d));
+            ft = new SimpleDateFormat("HH");
+            cmds.add("set hour=" + ft.format(d));
+            ft = new SimpleDateFormat("mm");
+            cmds.add("set minute=" + ft.format(d));
+            ft = new SimpleDateFormat("ss");
+            cmds.add("set second=" + ft.format(d));
         }
+
+        for (String cmd : safeQuery.split(";")) {
+            cmd = cmd.trim();
+            if (cmd.equals(""))
+                continue;
+
+            if ("select".equalsIgnoreCase(cmd.split("\\s+")[0])) {
+                cmd = "INSERT OVERWRITE DIRECTORY '" + resultLocation + "' "
+                        + cmd;
+            }
+
+            cmds.add(cmd);
+        }
+
+        return cmds;
+    }
+
+    protected CommandProcessorResponse runCmd(String cmd)
+            throws RuntimeException, CommandNeedRetryException {
+        String[] tokens = cmd.split("\\s+");
 
         CommandProcessor proc = CommandProcessorFactory
                 .get(tokens[0], hiveConf);
@@ -135,7 +159,7 @@ public class QueryWorker implements Runnable {
             qp.setTryCount(Integer.MAX_VALUE);
 
             try {
-                resp = qp.run(cmd_trimmed);
+                resp = qp.run(cmd);
             } catch (CommandNeedRetryException e) {
                 throw e;
             } finally {
@@ -143,8 +167,7 @@ public class QueryWorker implements Runnable {
             }
         } else {
             try {
-                String cmd_1 = cmd_trimmed.substring(tokens[0].length()).trim();
-                resp = proc.run(cmd_1);
+                resp = proc.run(cmd.substring(tokens[0].length()).trim());
             } catch (CommandNeedRetryException e) {
                 throw e;
             }
@@ -153,35 +176,22 @@ public class QueryWorker implements Runnable {
         return resp;
     }
 
-    protected void running() {
-        HWIHiveHistoryViewer hv = HWIUtil.getHiveHistoryViewer(historyFile);
-
-        String jobId = HWIUtil.getJobId(hv);
-
-        if (jobId != null && !jobId.equals("")
-                && !jobId.equals(mquery.getJobId())) {
-            mquery.setJobId(jobId);
-            QueryStore.getInstance().updateQuery(mquery);
-        }
-
-    }
-
     /**
      * query finished
      * 
      */
     private void finish() {
 
-        HWIHiveHistoryViewer hv = HWIUtil.getHiveHistoryViewer(historyFile);
+        HWIHiveHistoryViewer hv = QueryUtil.getHiveHistoryViewer(historyFile);
 
-        String jobId = HWIUtil.getJobId(hv);
+        String jobId = QueryUtil.getJobId(hv);
 
         if (jobId != null && !jobId.equals("")
                 && !jobId.equals(mquery.getJobId())) {
             mquery.setJobId(jobId);
         }
 
-        Integer cpuTime = HWIUtil.getCpuTime(hv);
+        Integer cpuTime = QueryUtil.getCpuTime(hv);
 
         if (cpuTime != null && cpuTime > 0) {
             mquery.setCpuTime(cpuTime);
@@ -272,6 +282,23 @@ public class QueryWorker implements Runnable {
         }
 
         l4j.debug(this.mquery.getName() + " state is now FINISHED");
+    }
+
+    protected void running() {
+        HWIHiveHistoryViewer hv = QueryUtil.getHiveHistoryViewer(historyFile);
+
+        String jobId = QueryUtil.getJobId(hv);
+
+        if (jobId != null && !jobId.equals("")
+                && !jobId.equals(mquery.getJobId())) {
+            mquery.setJobId(jobId);
+            QueryStore.getInstance().updateQuery(mquery);
+        }
+
+    }
+
+    public Status getStatus() {
+        return mquery.getStatus();
     }
 
 }

@@ -24,14 +24,9 @@
             <td>$crontab.getId()</td>
             <td><a href="/hwi/crontabs/$crontab.getId()">$crontab.getName()</a></td>
             <td>
-                #if($crontab.getQuery().length() > 30)
-                #set($shortQuery=$crontab.getQuery().substring(0,30))
-                #else
-                #set($shortQuery=$crontab.getQuery())
-                #end
-                #set($shortQuery=$shortQuery.replaceAll("\r|\n", " "))
-                <pre class="long-query hide">$crontab.getQuery()</pre>
-                <pre class="short-query"><code class="sql">$shortQuery</code></pre>
+                #shortQuery($crontab.getQuery())
+                <pre class="short-query tip"><code class="sql">$shortQuery</code></pre>
+                <pre class="long-query hide"><code class="sql">$crontab.getQuery()</code></pre>
             </td>
             <td><code>$crontab.getCrontab()</code></td>
             <td><span class="label #crontab_status($crontab.getStatus())">$crontab.getStatus()</span></td>

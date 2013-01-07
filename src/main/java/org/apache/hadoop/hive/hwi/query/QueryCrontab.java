@@ -15,7 +15,7 @@ import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
 public class QueryCrontab implements Job {
-    protected static final Log l4j = LogFactory.getLog(QueryCron.class
+    protected static final Log l4j = LogFactory.getLog(QueryManager.class
             .getName());
 
     @Override
