@@ -29,6 +29,7 @@
                 #else
                 #set($shortQuery=$crontab.getQuery())
                 #end
+                #set($shortQuery=$shortQuery.replaceAll("\r|\n", " "))
                 <pre class="long-query hide">$crontab.getQuery()</pre>
                 <pre class="short-query"><code class="sql">$shortQuery</code></pre>
             </td>

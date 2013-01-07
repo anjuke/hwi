@@ -34,6 +34,7 @@
                 #else
                 #set($shortQuery=$query.getQuery())
                 #end
+                #set($shortQuery=$shortQuery.replaceAll("\r|\n", " "))
                 <pre class="long-query hide">$query.getQuery()</pre>
                 <pre class="short-query"><code class="sql">$shortQuery</code></pre>
             </td>
