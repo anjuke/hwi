@@ -13,6 +13,8 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.hive.conf.HiveConf;
 import org.apache.hadoop.hive.hwi.model.MQuery;
 import org.apache.hadoop.hive.hwi.model.MQuery.Status;
+import org.apache.hadoop.hive.hwi.query.RunningRunner.Progress;
+import org.apache.hadoop.hive.hwi.query.RunningRunner.Running;
 import org.apache.hadoop.hive.hwi.util.HWIHiveHistoryViewer;
 import org.apache.hadoop.hive.hwi.util.QueryUtil;
 import org.apache.hadoop.hive.ql.CommandNeedRetryException;
@@ -26,7 +28,7 @@ import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
-public class QueryRunner implements Job {
+public class QueryRunner implements Job, Running {
     protected static final Log l4j = LogFactory.getLog(QueryRunner.class
             .getName());
 
@@ -80,7 +82,7 @@ public class QueryRunner implements Job {
      */
     public void runQuery() {
         mquery.setResultLocation("/user/hive/result/" + mquery.getId() + "/");
-        mquery.setStatus(MQuery.Status.RUNNING);
+        mquery.setStatus(Status.RUNNING);
         qs.updateQuery(mquery);
 
         ArrayList<String> cmds = queryToCmds(mquery.getQuery(),
@@ -198,9 +200,9 @@ public class QueryRunner implements Job {
         }
 
         if (mquery.getErrorCode() == null || mquery.getErrorCode() == 0) {
-            mquery.setStatus(MQuery.Status.FINISHED);
+            mquery.setStatus(Status.FINISHED);
         } else {
-            mquery.setStatus(MQuery.Status.FAILED);
+            mquery.setStatus(Status.FAILED);
         }
 
         callback();
@@ -284,21 +286,25 @@ public class QueryRunner implements Job {
         l4j.debug(this.mquery.getName() + " state is now FINISHED");
     }
 
-    protected void running() {
-        HWIHiveHistoryViewer hv = QueryUtil.getHiveHistoryViewer(historyFile);
+    public Progress running() {
+        switch (mquery.getStatus()) {
+        case INITED:
+            return Progress.CONTINUE;
+        case RUNNING:
+            HWIHiveHistoryViewer hv = QueryUtil
+                    .getHiveHistoryViewer(historyFile);
 
-        String jobId = QueryUtil.getJobId(hv);
+            String jobId = QueryUtil.getJobId(hv);
 
-        if (jobId != null && !jobId.equals("")
-                && !jobId.equals(mquery.getJobId())) {
-            mquery.setJobId(jobId);
-            QueryStore.getInstance().updateQuery(mquery);
+            if (jobId != null && !jobId.equals("")
+                    && !jobId.equals(mquery.getJobId())) {
+                mquery.setJobId(jobId);
+                QueryStore.getInstance().copyAndUpdateQuery(mquery);
+            }
+            return Progress.CONTINUE;
+        default:
+            return Progress.EXIT;
         }
-
-    }
-
-    public Status getStatus() {
-        return mquery.getStatus();
     }
 
 }

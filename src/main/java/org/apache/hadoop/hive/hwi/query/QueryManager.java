@@ -5,6 +5,7 @@ import java.util.Properties;
 
 import org.apache.hadoop.hive.hwi.model.MCrontab;
 import org.apache.hadoop.hive.hwi.model.MQuery;
+import org.apache.hadoop.hive.hwi.query.RunningRunner.Running;
 import org.quartz.CronScheduleBuilder;
 import org.quartz.JobBuilder;
 import org.quartz.JobDataMap;
@@ -26,7 +27,7 @@ public class QueryManager {
     private static QueryManager instance;
 
     private Scheduler scheduler;
-    private QueryMonitor monitor;
+    private RunningRunner runner;
 
     private QueryManager() {
     }
@@ -47,7 +48,7 @@ public class QueryManager {
             l4j.info("QueryManager starting.");
             startScheduler();
             loadCrontabs();
-            startMonitor();
+            startRunner();
             l4j.info("QueryManager started.");
         } catch (SchedulerException e) {
             e.printStackTrace();
@@ -72,9 +73,9 @@ public class QueryManager {
         l4j.info("Crontabs loaded.");
     }
 
-    protected void startMonitor() {
-        monitor = new QueryMonitor();
-        monitor.start();
+    protected void startRunner() {
+        runner = new RunningRunner();
+        runner.start();
     }
 
     public boolean submit(MQuery mquery) {
@@ -156,11 +157,11 @@ public class QueryManager {
         }
     }
 
-    public boolean monitor(QueryRunner runner) {
-        if (monitor == null)
+    public boolean monitor(Running running) {
+        if (runner == null)
             return false;
 
-        monitor.monitor(runner);
+        runner.add(running);
         return true;
     }
 
@@ -176,8 +177,8 @@ public class QueryManager {
             }
         }
 
-        if (monitor != null)
-            monitor.shutdown();
+        if (runner != null)
+            runner.shutdown();
 
         l4j.info("QueryManager shutdown complete.");
     }

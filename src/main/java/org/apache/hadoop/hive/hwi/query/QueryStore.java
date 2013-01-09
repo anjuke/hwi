@@ -115,13 +115,24 @@ public class QueryStore {
      * 
      * @param mquery
      */
-    public void updateQuery(MQuery mquery) {
+    public void copyAndUpdateQuery(MQuery mquery) {
         try {
             Transaction tx = getPM().currentTransaction();
             MQuery query = getPM().getObjectById(MQuery.class, mquery.getId());
             query.copy(mquery);
             tx.begin();
             getPM().makePersistent(query);
+            tx.commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void updateQuery(MQuery mquery) {
+        try {
+            Transaction tx = getPM().currentTransaction();
+            tx.begin();
+            getPM().makePersistent(mquery);
             tx.commit();
         } catch (Exception e) {
             e.printStackTrace();
