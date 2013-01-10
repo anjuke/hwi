@@ -6,14 +6,17 @@
 <h2>
     $query.getName()
     #if ( $query.getCrontabId() )
-        <a class="pull-right btn" href="/hwi/crontabs/$query.getCrontabId()" title="Crontab">
+        <a class="pull-right btn right-btn" href="/hwi/crontabs/$query.getCrontabId()" title="Crontab">
             <i class="icon-time"></i>
         </a>
-    #elseif ( $query.getStatus() == "FINISHED" )
-        <a class="pull-right btn" href="/hwi/crontabs/create?queryId=$query.getId()" title="Crontab It !">
+    #else
+        <a class="pull-right btn right-btn" href="/hwi/crontabs/create?queryId=$query.getId()" title="Crontab It !">
             <i class="icon-time"></i>
         </a>
     #end
+    <a class="pull-right btn" href="/hwi/queries/create?queryId=$query.getId()" title="Clone It !">
+        <i class="icon-retweet"></i>
+    </a>
 </h2>
 </div>
 <hr class="bold">
@@ -39,7 +42,7 @@
     <dd>
         #shortQuery($query.getQuery())
         <pre class="short-query toggle" title="click to see full query"><code class="sql">$shortQuery</code></pre>
-        <pre class="long-query hide"><code class="sql">$query.getQuery()</code></pre>
+        <pre class="long-query togglable hide"><code class="sql">$query.getQuery()</code></pre>
     </dd>
     <dt>Callback</dt>
     <dd>#alt($query.getCallback() "--")</dd>

@@ -3,7 +3,11 @@
 <div>
 <a href="/hwi/crontabs">Crontabs</a>
 /
-<h2>$crontab.getName()<a class="pull-right btn btn-mini" href="/hwi/queries?crontabId=$crontab.getId()" title="Query History"><i class="icon-film"></i></a></h2>
+<h2>
+    $crontab.getName()
+    <a class="pull-right btn right-btn" href="/hwi/queries?crontabId=$crontab.getId()" title="Query History"><i class="icon-film"></i></a>
+    <a class="pull-right btn" href="/hwi/crontabs/create?crontabId=$crontab.getId()" title="Clone It !"><i class="icon-retweet"></i></a>
+</h2>
 </div>
 <hr class="bold">
     
@@ -52,7 +56,7 @@ $(function(){
     <dd>
         #shortQuery($crontab.getQuery())
         <pre class="short-query toggle" title="click to see full query"><code class="sql">$shortQuery</code></pre>
-        <pre class="long-query hide"><code class="sql">$crontab.getQuery()</code></pre>
+        <pre class="long-query togglable hide"><code class="sql">$crontab.getQuery()</code></pre>
     </dd>
     <dt>Callback</dt>
     <dd>#alt($crontab.getCallback() '--')</dd>

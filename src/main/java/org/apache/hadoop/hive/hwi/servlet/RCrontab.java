@@ -32,285 +32,328 @@ import com.sun.jersey.api.view.Viewable;
 
 @Path("/crontabs")
 public class RCrontab extends RBase {
-	protected static final Log l4j = LogFactory
-			.getLog(RCrontab.class.getName());
+    protected static final Log l4j = LogFactory
+            .getLog(RCrontab.class.getName());
 
-	@GET
-	@Produces("text/html")
-	public Viewable list(
-			@QueryParam(value = "page") @DefaultValue(value = "1") int page,
-			@QueryParam(value = "pageSize") @DefaultValue(value = "20") int pageSize) {
+    @GET
+    @Produces("text/html")
+    public Viewable list(
+            @QueryParam(value = "crontabName") String crontabName,
+            @QueryParam(value = "page") @DefaultValue(value = "1") int page,
+            @QueryParam(value = "pageSize") @DefaultValue(value = "20") int pageSize) {
 
-		QueryStore qs = QueryStore.getInstance();
-		
-		Query query = qs.getPM().newQuery(MCrontab.class, "status != :status");
-		query.setOrdering("id DESC");
-		HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("status", MCrontab.Status.DELETED);
+        QueryStore qs = QueryStore.getInstance();
 
-		Pagination<MCrontab> pagination = qs.crontabPaginate(query, map, page, pageSize);
+        Query query = qs.getPM().newQuery(MCrontab.class);
+        query.setOrdering("id DESC");
 
-		request.setAttribute("pagination", pagination);
+        HashMap<String, Object> map = new HashMap<String, Object>();
 
-		return new Viewable("/crontab/list.vm");
-	}
+        query.setFilter("status != :status");
+        map.put("status", MCrontab.Status.DELETED);
 
-	@GET
-	@Path("{id}")
-	@Produces("text/html")
-	public Viewable info(@PathParam(value = "id") Integer id) {
-		QueryStore qs = QueryStore.getInstance();
+        if (crontabName != null) {
+            crontabName = crontabName.trim();
+            if (!crontabName.equals("")) {
+                query.setFilter("name.matches('(?i).*" + crontabName + ".*')");
+            }
+        }
 
-		MCrontab crontab = qs.getCrontabById(id);
+        Pagination<MCrontab> pagination = qs.crontabPaginate(query, map, page,
+                pageSize);
 
-		if (crontab == null)
-			throw new WebApplicationException(404);
+        request.setAttribute("crontabName", crontabName);
+        request.setAttribute("pagination", pagination);
 
-		request.setAttribute("crontab", crontab);
+        return new Viewable("/crontab/list.vm");
+    }
 
-		SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		request.setAttribute("createdTime", sf.format(crontab.getCreated()));
-		request.setAttribute("updatedTime", sf.format(crontab.getUpdated()));
+    @GET
+    @Path("{id}")
+    @Produces("text/html")
+    public Viewable info(@PathParam(value = "id") Integer id) {
+        QueryStore qs = QueryStore.getInstance();
 
-		return new Viewable("/crontab/info.vm");
-	}
+        MCrontab crontab = qs.getCrontabById(id);
 
-	@GET
-	@Path("create")
-	@Produces("text/html")
-	public Viewable create(@QueryParam(value = "queryId") Integer queryId) {
-		if (queryId != null) {
-			MQuery mquery = QueryStore.getInstance().getById(queryId);
-			if (mquery != null) {
-				request.setAttribute("query", mquery.getQuery());
-				request.setAttribute("callback", mquery.getCallback());
-			}
-		}
-		return new Viewable("/crontab/create.vm");
-	}
+        if (crontab == null)
+            throw new WebApplicationException(404);
 
-	@POST
-	@Path("create")
-	@Produces("text/html")
-	public Viewable create(@FormParam(value = "name") String name,
-			@FormParam(value = "query") String query,
-			@FormParam(value = "callback") String callback,
-			@FormParam(value = "hour") String hour,
-			@FormParam(value = "day") String day,
-			@FormParam(value = "month") String month,
-			@FormParam(value = "week") String week) {
+        request.setAttribute("crontab", crontab);
 
-		Viewable v = new Viewable("/crontab/create.vm");
-		
-		request.setAttribute("name", name);
-		request.setAttribute("query", query);
-		request.setAttribute("callback", callback);
-		request.setAttribute("hour", hour);
-		request.setAttribute("day", day);
-		request.setAttribute("month", month);
-		request.setAttribute("week", week);
+        SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        request.setAttribute("createdTime", sf.format(crontab.getCreated()));
+        request.setAttribute("updatedTime", sf.format(crontab.getUpdated()));
 
-		if (name == null || name.equals("")) {
-			request.setAttribute("msg", "name can't be empty");
-			return v;
-		}
+        return new Viewable("/crontab/info.vm");
+    }
 
-		if (query == null || query.equals("")) {
-			request.setAttribute("msg", "query can't be empty");
-			return v;
-		}
+    @GET
+    @Path("create")
+    @Produces("text/html")
+    public Viewable create(@QueryParam(value = "crontabId") Integer crontabId,
+            @QueryParam(value = "queryId") Integer queryId) {
 
-		if (hour == null || hour.equals("")) {
-			request.setAttribute("msg", "hour can't be empty");
-			return v;
-		}
+        if (crontabId != null) {
+            MCrontab mcrontab = QueryStore.getInstance().getCrontabById(
+                    crontabId);
+            if (mcrontab != null) {
+                request.setAttribute("name", mcrontab.getName());
+                request.setAttribute("query", mcrontab.getQuery());
+                request.setAttribute("callback", mcrontab.getCallback());
 
-		if (day == null || day.equals("")) {
-			request.setAttribute("msg", "day can't be empty");
-			return v;
-		}
+                String crontab = mcrontab.getCrontab();
+                String[] tokens = crontab.split("\\s+");
 
-		if (month == null || month.equals("")) {
-			request.setAttribute("msg", "month can't be empty");
-			return v;
-		}
+                if (tokens.length == 6 || tokens.length == 7) {
+                    request.setAttribute("hour", tokens[2]);
+                    request.setAttribute("day", tokens[3]);
+                    request.setAttribute("month", tokens[4]);
+                    request.setAttribute("week", tokens[5]);
+                }
 
-		if (week == null || week.equals("")) {
-			request.setAttribute("msg", "week can't be empty");
-			return v;
-		}
+                return new Viewable("/crontab/create.vm");
+            }
+        }
 
-		String crontab = "0 0 " + hour + " " + day + " " + month + " " + week;
+        if (queryId != null) {
+            MQuery mquery = QueryStore.getInstance().getById(queryId);
+            if (mquery != null) {
+                request.setAttribute("name", mquery.getName());
+                request.setAttribute("query", mquery.getQuery());
+                request.setAttribute("callback", mquery.getCallback());
 
-		try {
-			CronExpression.validateExpression(crontab);
-		} catch (Exception e) {
-			request.setAttribute("msg", "crontab: " + e.getMessage());
-			return v;
-		}
+                return new Viewable("/crontab/create.vm");
+            }
+        }
 
-		QueryStore qs = QueryStore.getInstance();
+        return new Viewable("/crontab/create.vm");
+    }
 
-		MCrontab mcrontab = new MCrontab(name, query, callback, crontab,
-				"hadoop");
-		qs.insertCrontab(mcrontab);
+    @POST
+    @Path("create")
+    @Produces("text/html")
+    public Viewable create(@FormParam(value = "name") String name,
+            @FormParam(value = "query") String query,
+            @FormParam(value = "callback") String callback,
+            @FormParam(value = "hour") String hour,
+            @FormParam(value = "day") String day,
+            @FormParam(value = "month") String month,
+            @FormParam(value = "week") String week) {
 
-		QueryManager.getInstance().schedule(mcrontab);
+        Viewable v = new Viewable("/crontab/create.vm");
 
-		throw new WebApplicationException(Response.seeOther(
-				URI.create("crontabs/" + mcrontab.getId())).build());
-	}
+        request.setAttribute("name", name);
+        request.setAttribute("query", query);
+        request.setAttribute("callback", callback);
+        request.setAttribute("hour", hour);
+        request.setAttribute("day", day);
+        request.setAttribute("month", month);
+        request.setAttribute("week", week);
 
-	@GET
-	@Path("{id}/changeStatus/{status}")
-	@Produces("text/html")
-	public Viewable changeStatus(@PathParam(value = "id") int id,
-			@PathParam(value = "status") String status) {
+        if (name == null || name.equals("")) {
+            request.setAttribute("msg", "name can't be empty");
+            return v;
+        }
 
-		MCrontab crontab = QueryStore.getInstance().getCrontabById(id);
-		if (crontab == null) {
-			throw new WebApplicationException(404);
-		}
+        if (query == null || query.equals("")) {
+            request.setAttribute("msg", "query can't be empty");
+            return v;
+        }
 
-		if (status == null) {
-			throw new WebApplicationException(new Exception(
-					"status can't be empty"), 403);
-		}
+        if (hour == null || hour.equals("")) {
+            request.setAttribute("msg", "hour can't be empty");
+            return v;
+        }
 
-		Status s = null;
+        if (day == null || day.equals("")) {
+            request.setAttribute("msg", "day can't be empty");
+            return v;
+        }
 
-		try {
-			s = Status.valueOf(status.toUpperCase());
-		} catch (Exception e) {
-			throw new WebApplicationException(e, 403);
-		}
+        if (month == null || month.equals("")) {
+            request.setAttribute("msg", "month can't be empty");
+            return v;
+        }
 
-		crontab.setStatus(s);
-		QueryStore.getInstance().updateCrontab(crontab);
+        if (week == null || week.equals("")) {
+            request.setAttribute("msg", "week can't be empty");
+            return v;
+        }
 
-		switch (s) {
-		case RUNNING:
-			QueryManager.getInstance().schedule(crontab);
-			break;
-		case PAUSED:
-			QueryManager.getInstance().unschedule(crontab);
-			break;
-		case DELETED:
-			QueryManager.getInstance().unschedule(crontab);
-			break;
-		}
+        String crontab = "0 0 " + hour + " " + day + " " + month + " " + week
+                + " *";
 
-		throw new WebApplicationException(Response.seeOther(
-				URI.create("crontabs/" + crontab.getId())).build());
-	}
+        try {
+            CronExpression.validateExpression(crontab);
+        } catch (Exception e) {
+            request.setAttribute("msg", "crontab: " + e.getMessage());
+            return v;
+        }
 
-	@GET
-	@Path("{id}/update")
-	@Produces("text/html")
-	public Viewable update(@PathParam(value = "id") Integer id) {
+        QueryStore qs = QueryStore.getInstance();
 
-		if (id == null) {
-			throw new WebApplicationException(404);
-		}
+        MCrontab mcrontab = new MCrontab(name, query, callback, crontab,
+                "hadoop");
+        qs.insertCrontab(mcrontab);
 
-		MCrontab crontab = QueryStore.getInstance().getCrontabById(id);
-		if (crontab == null) {
-			throw new WebApplicationException(404);
-		}
-		
-		if(crontab.getStatus() == Status.DELETED){
-			throw new WebApplicationException(new Exception("crontab has alreay been deleted"), 403);
-		}
-		
-		request.setAttribute("crontab", crontab);
+        QueryManager.getInstance().schedule(mcrontab);
 
-		return new Viewable("/crontab/update.vm");
-	}
+        throw new WebApplicationException(Response.seeOther(
+                URI.create("crontabs/" + mcrontab.getId())).build());
+    }
 
-	@POST
-	@Path("{id}/update")
-	@Produces("text/html")
-	public Viewable update(
-			@PathParam(value = "id") Integer id,
-			@FormParam(value = "name") String name,
-			@FormParam(value = "query") String query,
-			@FormParam(value = "callback") String callback,
-			@FormParam(value = "hour") String hour,
-			@FormParam(value = "day") String day,
-			@FormParam(value = "month") String month,
-			@FormParam(value = "week") String week) {
+    @GET
+    @Path("{id}/changeStatus/{status}")
+    @Produces("text/html")
+    public Viewable changeStatus(@PathParam(value = "id") int id,
+            @PathParam(value = "status") String status) {
 
-		Viewable v = new Viewable("/crontab/update.vm");
-		
-		request.setAttribute("name", name);
-		request.setAttribute("query", query);
-		request.setAttribute("callback", callback);
-		request.setAttribute("hour", hour);
-		request.setAttribute("day", day);
-		request.setAttribute("month", month);
-		request.setAttribute("week", week);
+        MCrontab crontab = QueryStore.getInstance().getCrontabById(id);
+        if (crontab == null) {
+            throw new WebApplicationException(404);
+        }
 
-		if (name == null || name.equals("")) {
-			request.setAttribute("msg", "name can't be empty");
-			return v;
-		}
+        if (status == null) {
+            throw new WebApplicationException(new Exception(
+                    "status can't be empty"), 403);
+        }
 
-		if (query == null || query.equals("")) {
-			request.setAttribute("msg", "query can't be empty");
-			return v;
-		}
+        Status s = null;
 
-		if (hour == null || hour.equals("")) {
-			request.setAttribute("msg", "hour can't be empty");
-			return v;
-		}
+        try {
+            s = Status.valueOf(status.toUpperCase());
+        } catch (Exception e) {
+            throw new WebApplicationException(e, 403);
+        }
 
-		if (day == null || day.equals("")) {
-			request.setAttribute("msg", "day can't be empty");
-			return v;
-		}
+        crontab.setStatus(s);
+        QueryStore.getInstance().updateCrontab(crontab);
 
-		if (month == null || month.equals("")) {
-			request.setAttribute("msg", "month can't be empty");
-			return v;
-		}
+        switch (s) {
+        case RUNNING:
+            QueryManager.getInstance().schedule(crontab);
+            break;
+        case PAUSED:
+            QueryManager.getInstance().unschedule(crontab);
+            break;
+        case DELETED:
+            QueryManager.getInstance().unschedule(crontab);
+            break;
+        }
 
-		if (week == null || week.equals("")) {
-			request.setAttribute("msg", "week can't be empty");
-			return v;
-		}
+        throw new WebApplicationException(Response.seeOther(
+                URI.create("crontabs/" + crontab.getId())).build());
+    }
 
-		String crontab = "0 0 " + hour + " " + day + " " + month + " " + week;
+    @GET
+    @Path("{id}/update")
+    @Produces("text/html")
+    public Viewable update(@PathParam(value = "id") Integer id) {
 
-		try {
-			CronExpression.validateExpression(crontab);
-		} catch (Exception e) {
-			request.setAttribute("msg", "crontab: " + e.getMessage());
-			return v;
-		}
+        if (id == null) {
+            throw new WebApplicationException(404);
+        }
 
-		QueryStore qs = QueryStore.getInstance();
+        MCrontab crontab = QueryStore.getInstance().getCrontabById(id);
+        if (crontab == null) {
+            throw new WebApplicationException(404);
+        }
 
-		MCrontab mcrontab = QueryStore.getInstance().getCrontabById(id);
-		if (mcrontab == null) {
-			throw new WebApplicationException(404);
-		}
-	
-		mcrontab.setName(name);
-		mcrontab.setQuery(query);
-		mcrontab.setCallback(callback);
-		mcrontab.setCrontab(crontab);
-		mcrontab.setUpdated(Calendar.getInstance(TimeZone.getDefault()).getTime());
-		
-		qs.updateCrontab(mcrontab);
+        if (crontab.getStatus() == Status.DELETED) {
+            throw new WebApplicationException(new Exception(
+                    "crontab has alreay been deleted"), 403);
+        }
 
-		if(mcrontab.getStatus() == Status.RUNNING){
-			QueryManager.getInstance().unschedule(mcrontab);
-			QueryManager.getInstance().schedule(mcrontab);
-		}
+        request.setAttribute("crontab", crontab);
 
-		throw new WebApplicationException(Response.seeOther(
-				URI.create("crontabs/" + mcrontab.getId())).build());
-	}
+        return new Viewable("/crontab/update.vm");
+    }
+
+    @POST
+    @Path("{id}/update")
+    @Produces("text/html")
+    public Viewable update(@PathParam(value = "id") Integer id,
+            @FormParam(value = "name") String name,
+            @FormParam(value = "query") String query,
+            @FormParam(value = "callback") String callback,
+            @FormParam(value = "hour") String hour,
+            @FormParam(value = "day") String day,
+            @FormParam(value = "month") String month,
+            @FormParam(value = "week") String week) {
+
+        Viewable v = new Viewable("/crontab/update.vm");
+
+        request.setAttribute("name", name);
+        request.setAttribute("query", query);
+        request.setAttribute("callback", callback);
+        request.setAttribute("hour", hour);
+        request.setAttribute("day", day);
+        request.setAttribute("month", month);
+        request.setAttribute("week", week);
+
+        if (name == null || name.equals("")) {
+            request.setAttribute("msg", "name can't be empty");
+            return v;
+        }
+
+        if (query == null || query.equals("")) {
+            request.setAttribute("msg", "query can't be empty");
+            return v;
+        }
+
+        if (hour == null || hour.equals("")) {
+            request.setAttribute("msg", "hour can't be empty");
+            return v;
+        }
+
+        if (day == null || day.equals("")) {
+            request.setAttribute("msg", "day can't be empty");
+            return v;
+        }
+
+        if (month == null || month.equals("")) {
+            request.setAttribute("msg", "month can't be empty");
+            return v;
+        }
+
+        if (week == null || week.equals("")) {
+            request.setAttribute("msg", "week can't be empty");
+            return v;
+        }
+
+        String crontab = "0 0 " + hour + " " + day + " " + month + " " + week;
+
+        try {
+            CronExpression.validateExpression(crontab);
+        } catch (Exception e) {
+            request.setAttribute("msg", "crontab: " + e.getMessage());
+            return v;
+        }
+
+        QueryStore qs = QueryStore.getInstance();
+
+        MCrontab mcrontab = QueryStore.getInstance().getCrontabById(id);
+        if (mcrontab == null) {
+            throw new WebApplicationException(404);
+        }
+
+        mcrontab.setName(name);
+        mcrontab.setQuery(query);
+        mcrontab.setCallback(callback);
+        mcrontab.setCrontab(crontab);
+        mcrontab.setUpdated(Calendar.getInstance(TimeZone.getDefault())
+                .getTime());
+
+        qs.updateCrontab(mcrontab);
+
+        if (mcrontab.getStatus() == Status.RUNNING) {
+            QueryManager.getInstance().unschedule(mcrontab);
+            QueryManager.getInstance().schedule(mcrontab);
+        }
+
+        throw new WebApplicationException(Response.seeOther(
+                URI.create("crontabs/" + mcrontab.getId())).build());
+    }
 
 }

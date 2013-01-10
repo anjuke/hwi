@@ -42,204 +42,223 @@ import com.sun.jersey.api.view.Viewable;
 
 @Path("/queries")
 public class RQuery extends RBase {
-	protected static final Log l4j = LogFactory.getLog(RQuery.class.getName());
-	
-	@GET
-	@Produces("text/html")
-	public Viewable list(
-			@QueryParam(value = "crontabId") Integer crontabId,
-			@QueryParam(value = "page") @DefaultValue(value = "1") int page,
-			@QueryParam(value = "pageSize") @DefaultValue(value = "20") int pageSize) {
+    protected static final Log l4j = LogFactory.getLog(RQuery.class.getName());
 
-		QueryStore qs = QueryStore.getInstance();
-		Pagination<MQuery> pagination = null;
-		
-		if(crontabId != null){
-			Query query = qs.getPM().newQuery(MQuery.class, "crontabId == :crontabId");
-			query.setOrdering("id DESC");
-			HashMap<String, Object> map = new HashMap<String, Object>();
-			map.put("crontabId", crontabId);
-			pagination = qs.paginate(query, map, page, pageSize);
-		}else{
-			pagination = qs.paginate(page, pageSize);
-		}
-		
-		request.setAttribute("crontabId", crontabId);
-		request.setAttribute("pagination", pagination);
+    @GET
+    @Produces("text/html")
+    public Viewable list(
+            @QueryParam(value = "crontabId") Integer crontabId,
+            @QueryParam(value = "queryName") String queryName,
+            @QueryParam(value = "page") @DefaultValue(value = "1") int page,
+            @QueryParam(value = "pageSize") @DefaultValue(value = "20") int pageSize) {
 
-		return new Viewable("/query/list.vm");
-	}
+        QueryStore qs = QueryStore.getInstance();
+        Pagination<MQuery> pagination = null;
 
-	@GET
-	@Path("{id}")
-	@Produces("text/html")
-	public Viewable info(@PathParam(value = "id") Integer id) {
-		QueryStore qs = QueryStore.getInstance();
-		
-		MQuery query = qs.getById(id);
+        Query query = qs.getPM().newQuery(MQuery.class);
+        query.setOrdering("id DESC");
 
-		if (query == null)
-			throw new WebApplicationException(404);
+        HashMap<String, Object> map = new HashMap<String, Object>();
 
-		request.setAttribute("query", query);
+        if (crontabId != null) {
+            query.setFilter("crontabId == :crontabId");
+            map.put("crontabId", crontabId);
+        }
 
-		if (query.getJobId() != null) {
-			List<Map<String, Object>> jobInfos = new ArrayList<Map<String, Object>>();
-			for (String jobId : query.getJobId().split(";")) {
-				if (jobId.equals(""))
-					continue;
-				HashMap<String, Object> map = new HashMap<String, Object>();
-				map.put("id", jobId);
-				map.put("url", HadoopUtil.getJobTrackerURL(jobId));
-				jobInfos.add(map);
-			}
-			request.setAttribute("jobInfos", jobInfos);
-		}
+        if (queryName != null) {
+            queryName = queryName.trim();
+            if (!queryName.equals("")) {
+                query.setFilter("name.matches('(?i).*" + queryName + ".*')");
+            }
+        }
 
-		SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		request.setAttribute("createdTime", sf.format(query.getCreated()));
-		request.setAttribute("updatedTime", sf.format(query.getUpdated()));
-		
-		if (query.getCpuTime() != null) {
-			request.setAttribute("cpuTime",
-					Utilities.formatMsecToStr(query.getCpuTime()));
-		}
+        pagination = qs.paginate(query, map, page, pageSize);
 
-		if (query.getTotalTime() != null) {
-			request.setAttribute("totalTime",
-					Utilities.formatMsecToStr(query.getTotalTime()));
-		}
+        request.setAttribute("crontabId", crontabId);
+        request.setAttribute("queryName", queryName);
+        request.setAttribute("pagination", pagination);
 
-		if (query.getCpuTime() != null && query.getTotalTime() != null
-				&& query.getCpuTime() > query.getTotalTime()) {
-			request.setAttribute(
-					"savedTime",
-					Utilities.formatMsecToStr(Math.abs(query.getCpuTime()
-							- query.getTotalTime())));
-		}
+        return new Viewable("/query/list.vm");
+    }
 
-		return new Viewable("/query/info.vm");
-	}
+    @GET
+    @Path("{id}")
+    @Produces("text/html")
+    public Viewable info(@PathParam(value = "id") Integer id) {
+        QueryStore qs = QueryStore.getInstance();
 
-	@GET
-	@Path("create")
-	@Produces("text/html")
-	public Viewable create() {
-		return new Viewable("/query/create.vm");
-	}
+        MQuery query = qs.getById(id);
 
-	@POST
-	@Path("create")
-	@Produces("text/html")
-	public Viewable create(@FormParam(value = "query") String query,
-			@FormParam(value = "name") String name,
-			@FormParam(value = "callback") String callback) {
+        if (query == null)
+            throw new WebApplicationException(404);
 
-		Viewable v = new Viewable("/query/create.vm");
-		
-		if (query == null || query.equals("")) {
-			request.setAttribute("msg", "query can't be empty");
-			return v;
-		}
+        request.setAttribute("query", query);
 
-		Date created = Calendar.getInstance(TimeZone.getDefault()).getTime();
-		SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
+        if (query.getJobId() != null) {
+            List<Map<String, Object>> jobInfos = new ArrayList<Map<String, Object>>();
+            for (String jobId : query.getJobId().split(";")) {
+                if (jobId.equals(""))
+                    continue;
+                HashMap<String, Object> map = new HashMap<String, Object>();
+                map.put("id", jobId);
+                map.put("url", HadoopUtil.getJobTrackerURL(jobId));
+                jobInfos.add(map);
+            }
+            request.setAttribute("jobInfos", jobInfos);
+        }
 
-		if (name == null || "".equals(name)) {
-			name = sf.format(created);
-		}
+        SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        request.setAttribute("createdTime", sf.format(query.getCreated()));
+        request.setAttribute("updatedTime", sf.format(query.getUpdated()));
 
-		QueryStore qs = QueryStore.getInstance();
+        if (query.getCpuTime() != null) {
+            request.setAttribute("cpuTime",
+                    Utilities.formatMsecToStr(query.getCpuTime()));
+        }
 
-		MQuery mquery = new MQuery(name, query, callback, "hadoop");
-		qs.insertQuery(mquery);
+        if (query.getTotalTime() != null) {
+            request.setAttribute("totalTime",
+                    Utilities.formatMsecToStr(query.getTotalTime()));
+        }
 
-		QueryManager.getInstance().submit(mquery);
+        if (query.getCpuTime() != null && query.getTotalTime() != null
+                && query.getCpuTime() > query.getTotalTime()) {
+            request.setAttribute(
+                    "savedTime",
+                    Utilities.formatMsecToStr(Math.abs(query.getCpuTime()
+                            - query.getTotalTime())));
+        }
 
-		throw new WebApplicationException(Response.seeOther(
-				URI.create("queries/" + mquery.getId())).build());
-	}
+        return new Viewable("/query/info.vm");
+    }
 
-	@GET
-	@Path("{id}/result")
-	@Produces("text/html")
-	public Viewable result(
-			@PathParam(value = "id") Integer id,
-			@QueryParam(value = "raw") @DefaultValue(value = "false") boolean raw) {
-		Viewable v = new Viewable("/query/result.vm");
-		
-		QueryStore qs = QueryStore.getInstance();
-		
-		MQuery query = qs.getById(id);
+    @GET
+    @Path("create")
+    @Produces("text/html")
+    public Viewable create(@QueryParam(value = "queryId") Integer queryId) {
+        if (queryId != null) {
+            MQuery mquery = QueryStore.getInstance().getById(queryId);
+            if (mquery != null) {
+                request.setAttribute("name", mquery.getName());
+                request.setAttribute("query", mquery.getQuery());
+                request.setAttribute("callback", mquery.getCallback());
+            }
+        }
+        return new Viewable("/query/create.vm");
+    }
 
-		if (query == null) {
-			throw new WebApplicationException(404);
-		}
+    @POST
+    @Path("create")
+    @Produces("text/html")
+    public Viewable create(@FormParam(value = "query") String query,
+            @FormParam(value = "name") String name,
+            @FormParam(value = "callback") String callback) {
 
-		request.setAttribute("query", query);
+        Viewable v = new Viewable("/query/create.vm");
 
-		if (query.getStatus() != MQuery.Status.FINISHED) {
-			throw new WebApplicationException(404);
-		}
+        if (query == null || query.equals("")) {
+            request.setAttribute("msg", "query can't be empty");
+            return v;
+        }
 
-		ArrayList<String> partialResult = new ArrayList<String>();
+        Date created = Calendar.getInstance(TimeZone.getDefault()).getTime();
+        SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
 
-		try {
+        if (name == null || "".equals(name)) {
+            name = sf.format(created);
+        }
 
-			org.apache.hadoop.fs.Path rPath = new org.apache.hadoop.fs.Path(
-					query.getResultLocation());
-			HiveConf hiveConf = new HiveConf(SessionState.class);
-			FileSystem fs = rPath.getFileSystem(hiveConf);
+        QueryStore qs = QueryStore.getInstance();
 
-			if (!fs.getFileStatus(rPath).isDir()) {
-				request.setAttribute("msg", rPath + "is not directory");
-				return v;
-			}
+        MQuery mquery = new MQuery(name, query, callback, "hadoop");
+        qs.insertQuery(mquery);
 
-			int readedLines = 0;
-			String temp = null;
+        QueryManager.getInstance().submit(mquery);
 
-			FileStatus[] fss = fs.listStatus(rPath);
-			for (FileStatus _fs : fss) {
-				org.apache.hadoop.fs.Path _fsPath = _fs.getPath();
-				if (!fs.getFileStatus(_fsPath).isDir()) {
-					BufferedReader bf = new BufferedReader(
-							new InputStreamReader(fs.open(_fsPath), "UTF-8"));
+        throw new WebApplicationException(Response.seeOther(
+                URI.create("queries/" + mquery.getId())).build());
+    }
 
-					if (raw) {
-						response.addHeader("Content-Disposition",
-								"attachment; filename=hwi_result_" + id
-										+ ".txt");
-						response.addHeader("Content-Type", "text/plain");
-						PrintWriter writer = response.getWriter();
-						while ((temp = bf.readLine()) != null) {
-							writer.println(temp.replace('\1', '\t'));
-						}
-					} else {
-						while ((temp = bf.readLine()) != null
-								&& readedLines < 100) {
-							partialResult.add(temp.replace('\1', '\t'));
-							readedLines++;
-						}
+    @GET
+    @Path("{id}/result")
+    @Produces("text/html")
+    public Viewable result(
+            @PathParam(value = "id") Integer id,
+            @QueryParam(value = "raw") @DefaultValue(value = "false") boolean raw) {
+        Viewable v = new Viewable("/query/result.vm");
 
-						if (readedLines >= 100) {
-							break;
-						}
-					}
+        QueryStore qs = QueryStore.getInstance();
 
-					bf.close();
-				}
-			}
-			FileSystem.closeAll();
-		} catch (Exception e) {
-			throw new WebApplicationException(e);
-		}
+        MQuery query = qs.getById(id);
 
-		if (raw) {
-			throw new WebApplicationException(200);
-		} else {
-			request.setAttribute("partialResult", partialResult);
-			return v;
-		}
-	}
+        if (query == null) {
+            throw new WebApplicationException(404);
+        }
+
+        request.setAttribute("query", query);
+
+        if (query.getStatus() != MQuery.Status.FINISHED) {
+            throw new WebApplicationException(404);
+        }
+
+        ArrayList<String> partialResult = new ArrayList<String>();
+
+        try {
+
+            org.apache.hadoop.fs.Path rPath = new org.apache.hadoop.fs.Path(
+                    query.getResultLocation());
+            HiveConf hiveConf = new HiveConf(SessionState.class);
+            FileSystem fs = rPath.getFileSystem(hiveConf);
+
+            if (!fs.getFileStatus(rPath).isDir()) {
+                request.setAttribute("msg", rPath + "is not directory");
+                return v;
+            }
+
+            int readedLines = 0;
+            String temp = null;
+
+            FileStatus[] fss = fs.listStatus(rPath);
+            for (FileStatus _fs : fss) {
+                org.apache.hadoop.fs.Path _fsPath = _fs.getPath();
+                if (!fs.getFileStatus(_fsPath).isDir()) {
+                    BufferedReader bf = new BufferedReader(
+                            new InputStreamReader(fs.open(_fsPath), "UTF-8"));
+
+                    if (raw) {
+                        response.addHeader("Content-Disposition",
+                                "attachment; filename=hwi_result_" + id
+                                        + ".txt");
+                        response.addHeader("Content-Type", "text/plain");
+                        PrintWriter writer = response.getWriter();
+                        while ((temp = bf.readLine()) != null) {
+                            writer.println(temp.replace('\1', '\t'));
+                        }
+                    } else {
+                        while ((temp = bf.readLine()) != null
+                                && readedLines < 100) {
+                            partialResult.add(temp.replace('\1', '\t'));
+                            readedLines++;
+                        }
+
+                        if (readedLines >= 100) {
+                            break;
+                        }
+                    }
+
+                    bf.close();
+                }
+            }
+            FileSystem.closeAll();
+        } catch (Exception e) {
+            throw new WebApplicationException(e);
+        }
+
+        if (raw) {
+            throw new WebApplicationException(200);
+        } else {
+            request.setAttribute("partialResult", partialResult);
+            return v;
+        }
+    }
 }

@@ -3,7 +3,7 @@
     <head>
         <title>#alt($title "hwi")</title>
         <link href="/hwi/assets/css/bootstrap.min.css" rel="stylesheet">
-            <link href="/hwi/assets/css/github.css" rel="stylesheet">
+        <link href="/hwi/assets/css/github.css" rel="stylesheet">
         <link href="/hwi/assets/css/custom.less" rel="stylesheet/less">
         
         <script src="/hwi/assets/js/jquery.min.js" type="text/javascript" ></script>

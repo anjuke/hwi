@@ -19,14 +19,14 @@ $(function(){
     /* code syntax highlight */
     hljs.initHighlightingOnLoad()
     
-
-    /* short query tooltip */
-    $('.short-query.tip').tooltip({title:function(){
-    	return $(this).siblings('.long-query').text()
+    /* tip */
+    $('.tipper').tooltip({title:function(){
+    	return $(this).siblings('.tip').text()
     }})
     
-    /* short query toggle */
-    $('.short-query.toggle').click(function(){
-    	return $(this).siblings('.long-query').toggle()
+    /* toggle */
+    $('.toggle').click(function(){
+    	return $(this).siblings('.togglable').toggle()
     })
+
 });

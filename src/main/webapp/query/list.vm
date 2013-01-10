@@ -1,12 +1,25 @@
 #set($nav='query.list')
 
+#set($urlQuery = "")
+
 #if($crontabId)
-    #set($urlQuery = "crontabId=$crontabId")
-#else
-    #set($urlQuery = "")
+    #set($urlQuery = $urlQuery + "crontabId=$crontabId")
 #end
 
-<h2>Queries</h2>
+#if($queryName)
+    #set($urlQuery = $urlQuery + "queryName=$queryName")
+#end
+
+<div class="clearfix">
+<h2 class="pull-left">Queries</h2>
+
+<form class="form-search pull-right h2">
+  <div class="input-append">
+    <input type="text" class="search-query" name="queryName" value="$!queryName" placeholder="search query name">
+    <button type="submit" class="btn">Search</button>
+  </div>
+</form>
+</div>
 <hr class="bold">
     
 <div class="table-pages">
@@ -30,8 +43,8 @@
             <td><a href="/hwi/queries/$query.getId()">$query.getName()</a></td>
             <td>
                 #shortQuery($query.getQuery())
-                <pre class="short-query tip"><code class="sql">$shortQuery</code></pre>
-                <pre class="long-query hide"><code class="sql">$query.getQuery()</code></pre>
+                <pre class="short-query tipper thin no-border"><code class="sql">$shortQuery</code></pre>
+                <pre class="long-query tip hide thin top-border"><code class="sql">$query.getQuery()</code></pre>
             </td>
             <td><span class="label #query_status($query.getStatus())">$query.getStatus()</span></td>
             <td>

@@ -1,11 +1,26 @@
 #set($nav='crontab.list')
 
-<h2>Crontabs</h2>
+#set($urlQuery = "")
+
+#if($crontabName)
+    #set($urlQuery = $urlQuery + "crontabName=$crontabName")
+#end
+
+<div class="clearfix">
+<h2 class="pull-left">Crontabs</h2>
+
+<form class="form-search pull-right h2">
+  <div class="input-append">
+    <input type="text" class="search-query" name="crontabName" value="$!crontabName" placeholder="search crontab name">
+    <button type="submit" class="btn">Search</button>
+  </div>
+</form>
+</div>
 <hr class="bold">
 
 <div class="table-pages">
 
-#pagination( $pagination "" )
+#pagination( $pagination $urlQuery )
 
 <table class="table table-bordered table-striped">
     <thead>
@@ -25,8 +40,8 @@
             <td><a href="/hwi/crontabs/$crontab.getId()">$crontab.getName()</a></td>
             <td>
                 #shortQuery($crontab.getQuery())
-                <pre class="short-query tip"><code class="sql">$shortQuery</code></pre>
-                <pre class="long-query hide"><code class="sql">$crontab.getQuery()</code></pre>
+                <pre class="short-query tipper thin no-border"><code class="sql">$shortQuery</code></pre>
+                <pre class="long-query tip hide thin top-border"><code class="sql">$crontab.getQuery()</code></pre>
             </td>
             <td><code>$crontab.getCrontab()</code></td>
             <td><span class="label #crontab_status($crontab.getStatus())">$crontab.getStatus()</span></td>
@@ -37,7 +52,7 @@
 </table>
 
 #if($pagination.getItems().size() > 10)
-#pagination( $pagination "" )
+#pagination( $pagination $urlQuery )
 #end
 
 </div>
