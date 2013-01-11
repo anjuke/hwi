@@ -30,6 +30,8 @@ public class MQuery {
 
     private String userId;
 
+    private String groupId;
+
     private Integer crontabId;
 
     private Date created;
@@ -40,7 +42,8 @@ public class MQuery {
 
     private Integer totalTime;
 
-    public MQuery(String name, String query, String callback, String userId) {
+    public MQuery(String name, String query, String callback, String userId,
+            String groupId) {
         this.name = name;
         this.query = query;
         this.callback = callback;
@@ -49,6 +52,7 @@ public class MQuery {
         this.updated = this.created;
         this.status = Status.INITED;
         this.userId = userId;
+        this.groupId = groupId;
     }
 
     public void copy(MQuery mquery) {
@@ -62,6 +66,7 @@ public class MQuery {
         updated = mquery.updated;
         status = mquery.status;
         userId = mquery.userId;
+        groupId = mquery.groupId;
         jobId = mquery.jobId;
         crontabId = mquery.crontabId;
         cpuTime = mquery.cpuTime;
@@ -130,6 +135,14 @@ public class MQuery {
 
     public void setUserId(String userId) {
         this.userId = userId;
+    }
+
+    public String getGroupId() {
+        return groupId;
+    }
+
+    public void setGroupId(String groupId) {
+        this.groupId = groupId;
     }
 
     public Integer getCrontabId() {

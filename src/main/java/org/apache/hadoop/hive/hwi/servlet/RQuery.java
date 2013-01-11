@@ -170,7 +170,7 @@ public class RQuery extends RBase {
 
         QueryStore qs = QueryStore.getInstance();
 
-        MQuery mquery = new MQuery(name, query, callback, "hadoop");
+        MQuery mquery = new MQuery(name, query, callback, "hadoop", "hadoop");
         qs.insertQuery(mquery);
 
         QueryManager.getInstance().submit(mquery);

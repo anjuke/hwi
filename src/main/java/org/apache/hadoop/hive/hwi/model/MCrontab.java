@@ -20,6 +20,8 @@ public class MCrontab {
 
     private String userId;
 
+    private String groupId;
+
     private String crontab;
 
     private Date created;
@@ -29,12 +31,13 @@ public class MCrontab {
     private Status status;
 
     public MCrontab(String name, String query, String callback, String crontab,
-            String userId) {
+            String userId, String groupId) {
         this.name = name;
         this.query = query;
         this.callback = callback;
         this.crontab = crontab;
         this.userId = userId;
+        this.groupId = groupId;
         this.created = Calendar.getInstance(TimeZone.getDefault()).getTime();
         this.updated = this.created;
         this.setStatus(Status.PAUSED);
@@ -49,6 +52,7 @@ public class MCrontab {
         updated = mcrontab.updated;
         status = mcrontab.status;
         userId = mcrontab.userId;
+        groupId = mcrontab.groupId;
     }
 
     public Integer getId() {
@@ -97,6 +101,14 @@ public class MCrontab {
 
     public void setUserId(String userId) {
         this.userId = userId;
+    }
+
+    public String getGroupId() {
+        return groupId;
+    }
+
+    public void setGroupId(String groupId) {
+        this.groupId = groupId;
     }
 
     public Date getCreated() {

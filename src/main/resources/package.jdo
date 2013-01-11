@@ -76,6 +76,10 @@ http://java.sun.com/xml/ns/jdo/jdo_2_0.xsd">
         <column name="USER_ID" length="32" jdbc-type="VARCHAR" allows-null="false"/>
       </field>
       
+      <field name="groupId">
+        <column name="GROUP_ID" length="32" jdbc-type="VARCHAR" allows-null="false"/>
+      </field>
+      
       <field name="crontabId">
         <column name="CRONTAB_ID" jdbc-type="INTEGER" allows-null="true"/>
       </field>
@@ -121,6 +125,10 @@ http://java.sun.com/xml/ns/jdo/jdo_2_0.xsd">
       
       <field name="userId">
         <column name="USER_ID" length="32" jdbc-type="VARCHAR" allows-null="false"/>
+      </field>
+      
+      <field name="groupId">
+        <column name="GROUP_ID" length="32" jdbc-type="VARCHAR" allows-null="false"/>
       </field>
       
       <field name="created">

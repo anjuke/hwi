@@ -194,7 +194,7 @@ public class RCrontab extends RBase {
         QueryStore qs = QueryStore.getInstance();
 
         MCrontab mcrontab = new MCrontab(name, query, callback, crontab,
-                "hadoop");
+                "hadoop", "hadoop");
         qs.insertCrontab(mcrontab);
 
         QueryManager.getInstance().schedule(mcrontab);

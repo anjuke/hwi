@@ -32,7 +32,8 @@ public class QueryCrontab implements Job {
         String name = "[" + crontab.getName() + "] " + sf.format(created);
 
         MQuery query = new MQuery(name, crontab.getQuery(),
-                crontab.getCallback(), crontab.getUserId());
+                crontab.getCallback(), crontab.getUserId(),
+                crontab.getGroupId());
 
         query.setCrontabId(crontabId);
         QueryStore.getInstance().insertQuery(query);

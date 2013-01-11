@@ -86,7 +86,7 @@ public class TestEverything {
     public static void testQueryCron() throws InterruptedException {
         QueryManager.getInstance();
         MCrontab ct = new MCrontab("test-query", "select * from test", "",
-                "*/10 * * * * ?", "hadoop");
+                "*/10 * * * * ?", "hadoop", "hadoop");
         QueryStore.getInstance().insertCrontab(ct);
         QueryManager.getInstance().schedule(ct);
         Thread.sleep(30000);
