@@ -41,6 +41,7 @@ public class Pagination<T> {
     public Long getTotal() {
         if (total == null) {
             Query newQuery = query.getPersistenceManager().newQuery(query);
+            newQuery.setOrdering(null);
             newQuery.setResult("COUNT(id)");
             total = (Long) newQuery.executeWithMap(map);
         }
