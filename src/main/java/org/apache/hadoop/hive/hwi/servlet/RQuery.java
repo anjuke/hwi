@@ -78,8 +78,6 @@ public class RQuery extends RBase {
         request.setAttribute("queryName", queryName);
         request.setAttribute("pagination", pagination);
         
-        qs.shutdown();
-
         return new Viewable("/query/list.vm");
     }
 
@@ -108,8 +106,6 @@ public class RQuery extends RBase {
             }
             request.setAttribute("jobInfos", jobInfos);
         }
-        
-        qs.shutdown();
         
 
         SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -180,8 +176,6 @@ public class RQuery extends RBase {
 
         QueryManager.getInstance().submit(mquery);
         
-        qs.shutdown();
-
         throw new WebApplicationException(Response.seeOther(
                 URI.create("queries/" + mquery.getId())).build());
     }
@@ -198,8 +192,6 @@ public class RQuery extends RBase {
 
         MQuery query = qs.getById(id);
         
-        qs.shutdown();
-
         if (query == null) {
             throw new WebApplicationException(404);
         }
