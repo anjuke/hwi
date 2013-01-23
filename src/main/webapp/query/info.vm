@@ -1,7 +1,7 @@
 #set($nav='query.list')
 
 <div>
-<a href="/hwi/queries">Quries</a>
+<a href="/hwi/queries">Queries</a>
 /
 <h2>
     $query.getName()

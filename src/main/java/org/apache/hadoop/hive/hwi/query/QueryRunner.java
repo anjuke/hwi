@@ -85,8 +85,7 @@ public class QueryRunner implements Job, Running {
         mquery.setStatus(Status.RUNNING);
         qs.updateQuery(mquery);
 
-        ArrayList<String> cmds = queryToCmds(mquery.getQuery(),
-                mquery.getResultLocation());
+        ArrayList<String> cmds = queryToCmds(mquery);
 
         long start_time = System.currentTimeMillis();
         for (String cmd : cmds) {
@@ -106,11 +105,15 @@ public class QueryRunner implements Job, Running {
         qs.updateQuery(mquery);
     }
 
-    protected ArrayList<String> queryToCmds(String query, String resultLocation) {
+    protected ArrayList<String> queryToCmds(MQuery query) {
+        
         ArrayList<String> cmds = new ArrayList<String>();
+        String resultLocation = query.getResultLocation();
 
         // query is not safe ! safe it !
-        String safeQuery = QueryUtil.getSafeQuery(query);
+        String safeQuery = QueryUtil.getSafeQuery(query.getQuery());
+        
+        cmds.add("set mapred.job.name=HWI Query #" + query.getId() + " (" + query.getName() + ")");
 
         if (safeQuery.contains("hiveconf")) {
             Date d = new Date();
@@ -164,6 +167,9 @@ public class QueryRunner implements Job, Running {
                 resp = qp.run(cmd);
             } catch (CommandNeedRetryException e) {
                 throw e;
+            } catch (Exception e) {
+                e.printStackTrace();
+                return null;
             } finally {
                 qp.close();
             }
