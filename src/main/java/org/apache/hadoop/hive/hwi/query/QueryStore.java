@@ -48,6 +48,7 @@ public class QueryStore {
         }
         return instance;
     }
+    
 
     /**
      * Properties specified in hive-default.xml override the properties
@@ -106,9 +107,19 @@ public class QueryStore {
      */
     public void insertQuery(MQuery mquery) {
         Transaction tx = getPM().currentTransaction();
-        tx.begin();
-        getPM().makePersistent(mquery);
-        tx.commit();
+        
+        try {
+            tx.begin();
+            getPM().makePersistent(mquery);
+        } catch (Exception e) {
+            return;
+        }
+    
+        try {
+            tx.commit();
+        } catch (Exception e) {
+            tx.rollback();
+        }
     }
 
     /**
@@ -116,24 +127,46 @@ public class QueryStore {
      * @param mquery
      */
     public void copyAndUpdateQuery(MQuery mquery) {
+            
         try {
+            l4j.info("mquery classloader " + mquery.getClass().getClassLoader());
+            
             Transaction tx = getPM().currentTransaction();
             MQuery query = getPM().getObjectById(MQuery.class, mquery.getId());
+            
+            l4j.info("query classloader " + query.getClass().getClassLoader());
+            
             query.copy(mquery);
-            tx.begin();
-            getPM().makePersistent(query);
-            tx.commit();
+            
+            try {
+                tx.begin();
+                getPM().makePersistent(query);
+            } catch (Exception e) {
+                e.printStackTrace();
+                return;
+            }
+            
+            try {
+                tx.commit();
+            } catch (Exception e) {
+                tx.rollback();
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     public void updateQuery(MQuery mquery) {
+        Transaction tx = null;
         try {
-            Transaction tx = getPM().currentTransaction();
+            tx = getPM().currentTransaction();
             tx.begin();
             getPM().makePersistent(mquery);
-            tx.commit();
+            try {
+                tx.commit();
+            } catch (Exception e) {
+                tx.rollback();
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -165,14 +198,38 @@ public class QueryStore {
     public MQuery getById(Integer queryId) {
         Query query = getPM().newQuery(MQuery.class, "id == :id ");
         query.setUnique(true);
-        return (MQuery) query.execute(queryId);
+        
+        Object obj = query.execute(queryId);
+        
+        l4j.info("---- getById start ----");
+        
+        l4j.info("object class loader: " + obj.getClass().getClassLoader());
+        l4j.info("Query  class loader:" + Query.class.getClassLoader());
+        l4j.info("query  class loader:" + query.getClass().getClassLoader());
+        l4j.info("MQuery class loader: " + MQuery.class.getClassLoader());
+        
+        l4j.info("---- getById   end ----");
+        
+        return (MQuery) obj;
     }
 
     public void insertCrontab(MCrontab crontab) {
+        
         Transaction tx = getPM().currentTransaction();
-        tx.begin();
-        getPM().makePersistent(crontab);
-        tx.commit();
+        
+        try {
+            tx.begin();
+            getPM().makePersistent(crontab);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return;
+        }
+        
+        try {
+            tx.commit();
+        } catch (Exception e) {
+            tx.rollback();
+        }
     }
 
     public MCrontab getCrontabById(Integer crontabId) {
@@ -207,8 +264,19 @@ public class QueryStore {
         MCrontab crontab = getPM().getObjectById(MCrontab.class,
                 mcrontab.getId());
         crontab.copy(mcrontab);
-        tx.begin();
-        getPM().makePersistent(crontab);
-        tx.commit();
+        
+        try {
+            tx.begin();
+            getPM().makePersistent(crontab);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return;
+        }
+        
+        try {
+            tx.commit();
+        } catch (Exception e) {
+            tx.rollback();
+        }
     }
 }

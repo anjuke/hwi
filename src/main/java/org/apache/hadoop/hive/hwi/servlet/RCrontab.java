@@ -90,7 +90,7 @@ public class RCrontab extends RBase {
 
     @GET
     @Path("create")
-    @Produces("text/html")
+    @Produces("text/html;charset=ISO-8859-1")
     public Viewable create(@QueryParam(value = "crontabId") Integer crontabId,
             @QueryParam(value = "queryId") Integer queryId) {
 
@@ -132,7 +132,7 @@ public class RCrontab extends RBase {
 
     @POST
     @Path("create")
-    @Produces("text/html")
+    @Produces("text/html;charset=ISO-8859-1")
     public Viewable create(@FormParam(value = "name") String name,
             @FormParam(value = "query") String query,
             @FormParam(value = "callback") String callback,
@@ -248,7 +248,7 @@ public class RCrontab extends RBase {
 
     @GET
     @Path("{id}/update")
-    @Produces("text/html")
+    @Produces("text/html;charset=ISO-8859-1")
     public Viewable update(@PathParam(value = "id") Integer id) {
 
         if (id == null) {
@@ -272,7 +272,7 @@ public class RCrontab extends RBase {
 
     @POST
     @Path("{id}/update")
-    @Produces("text/html")
+    @Produces("text/html;charset=ISO-8859-1")
     public Viewable update(@PathParam(value = "id") Integer id,
             @FormParam(value = "name") String name,
             @FormParam(value = "query") String query,

@@ -5,7 +5,7 @@
     <groupId>org.apache.hive</groupId>
     <artifactId>hive-hwi</artifactId>
     <version>1.0</version>
-    <packaging>war</packaging>
+    <packaging>jar</packaging>
 
     <name>hwi</name>
     <url>http://maven.apache.org</url>
@@ -108,6 +108,7 @@
 
     <build>
         <plugins>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -116,6 +117,7 @@
                     <target>1.6</target>
                 </configuration>
             </plugin>
+
             <plugin>
                 <groupId>org.datanucleus</groupId>
                 <artifactId>maven-datanucleus-plugin</artifactId>
@@ -136,15 +138,59 @@
                     </dependency>
                 </dependencies>
             </plugin>
+
             <plugin>
                 <artifactId>maven-war-plugin</artifactId>
                 <version>2.3</version>
                 <configuration>
                     <attachClasses>true</attachClasses>
                     <archiveClasses>true</archiveClasses>
-                    <!--<packagingExcludes>WEB-INF/lib/*.jar</packagingExcludes>-->
+                    <packagingExcludes>WEB-INF/lib/*.jar</packagingExcludes>
                 </configuration>
             </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>1.2.2</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <artifactSet>
+                                <excludes>
+                                    <exclude>junit:junit</exclude>
+                                </excludes>
+                            </artifactSet>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+<!--
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>2.2.1</version>
+                <configuration>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>make-assembly</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+-->
+
         </plugins>
     </build>
 

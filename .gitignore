@@ -5,3 +5,4 @@
 target/
 *.swp
 src/main/resources/hive-site.xml
+work/

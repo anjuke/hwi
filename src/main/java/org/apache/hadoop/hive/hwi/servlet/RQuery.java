@@ -71,6 +71,11 @@ public class RQuery extends RBase {
                 query.setFilter("name.matches('(?i).*" + queryName + ".*')");
             }
         }
+        
+        l4j.info("------ list begin --------");
+        l4j.info("query classloader: " + query.getClass().getClassLoader());
+        l4j.info("MQuery classloader: " + MQuery.class.getClassLoader());
+        l4j.info("------ list   end --------");
 
         pagination = qs.paginate(query, map, page, pageSize);
 
@@ -91,6 +96,11 @@ public class RQuery extends RBase {
 
         if (query == null)
             throw new WebApplicationException(404);
+        
+        
+        l4j.info("------ view info start ------");
+        l4j.info("query: " + query.getClass().getClassLoader().getClass().getName());
+        l4j.info("------ view info end   ------");
 
         request.setAttribute("query", query);
 
@@ -135,7 +145,7 @@ public class RQuery extends RBase {
 
     @GET
     @Path("create")
-    @Produces("text/html")
+    @Produces("text/html;charset=ISO-8859-1")
     public Viewable create(@QueryParam(value = "queryId") Integer queryId) {
         if (queryId != null) {
             MQuery mquery = QueryStore.getInstance().getById(queryId);
@@ -150,7 +160,7 @@ public class RQuery extends RBase {
 
     @POST
     @Path("create")
-    @Produces("text/html")
+    @Produces("text/html;charset=ISO-8859-1")
     public Viewable create(@FormParam(value = "query") String query,
             @FormParam(value = "name") String name,
             @FormParam(value = "callback") String callback) {
@@ -175,6 +185,11 @@ public class RQuery extends RBase {
         qs.insertQuery(mquery);
 
         QueryManager.getInstance().submit(mquery);
+        
+        if (mquery == null || mquery.getId() == null) {
+            request.setAttribute("msg", "save query failed");
+            return v;
+        }
         
         throw new WebApplicationException(Response.seeOther(
                 URI.create("queries/" + mquery.getId())).build());
