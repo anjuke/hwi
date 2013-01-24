@@ -1,0 +1,20 @@
+#set($nav='user.set')
+
+#set($title='set user')
+
+<h2>Set User</h2>
+<hr class="bold">
+        
+<form action="" method="post" class="form-horizontal">
+
+    <div class="control-group">
+        <label class="control-label" for="user">User Name</label>
+        <div class="controls">
+            <input id="user" type="text" name="user" value="$!user" placeholder="Enter user name" />
+        </div>
+    </div>
+
+    <div class="form-actions">
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </div>
+</form>

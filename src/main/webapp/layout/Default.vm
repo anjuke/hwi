@@ -22,17 +22,27 @@
             <hr/>
             #if(!$nav) #set($nav = "") #end
             <ul class="nav nav-list">
+                <li class="nav-header">User</li>
+                <li #if($nav=='user.set')class="active"#end>
+                    <a href="/hwi/users/set">Set User</a>
+                </li>
+                
                 <li class="nav-header">Database</li>
                 <li #if($nav=='schema')class="active"#end>
                     <a href="/hwi/schema">Schema</a>
                 </li>
+                
                 <li class="nav-header">Query</li>
-                <li #if($nav=='query.list')class="active"#end>
-                    <a href="/hwi/queries">All Queries</a>
-                </li>
                 <li #if($nav=='query.create')class="active"#end>
                     <a href="/hwi/queries/create">Create Query</a>
                 </li>
+                <li #if($nav=='query.my')class="active"#end>
+                    <a href="/hwi/queries?extra=my">My Queries</a>
+                </li>
+                <li #if($nav=='query.list')class="active"#end>
+                    <a href="/hwi/queries">All Queries</a>
+                </li>
+                
                 <li class="nav-header">Crontab</li>
                 <li #if($nav=='crontab.list')class="active"#end>
                     <a href="/hwi/crontabs">All Crontabs</a>
@@ -40,6 +50,7 @@
                 <li #if($nav=='crontab.create')class="active"#end>
                     <a href="/hwi/crontabs/create">Create Crontab</a>
                 </li>
+                
                 <li class="nav-header">Help</li>
                 <li><a href="https://cwiki.apache.org/confluence/display/Hive/LanguageManual+UDF" target="_blank">UDF Manual</a></li>
                 <li><a href="http://hive.apache.org" target="_blank">Apache Hive</a></li>
@@ -51,7 +62,7 @@
         <div id="body" class="span10">
 
             #if($msg)
-            <div class="alert alert-#alt($type 'error')">
+            <div class="alert alert-#alt($msg-type 'error')">
                 <button type="button" class="close" data-dismiss="alert">&times;</button>
                 $msg
             </div>

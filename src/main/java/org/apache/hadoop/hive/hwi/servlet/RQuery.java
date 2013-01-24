@@ -64,6 +64,7 @@ public class RQuery extends RBase {
     public Viewable list(
             @QueryParam(value = "crontabId") Integer crontabId,
             @QueryParam(value = "queryName") String queryName,
+            @QueryParam(value = "extra") String extra,
             @QueryParam(value = "page") @DefaultValue(value = "1") int page,
             @QueryParam(value = "pageSize") @DefaultValue(value = "20") int pageSize) {
 
@@ -85,6 +86,12 @@ public class RQuery extends RBase {
             if (!queryName.equals("")) {
                 query.setFilter("name.matches('(?i).*" + queryName + ".*')");
             }
+        }
+        
+        if ("my".equals(extra)) {
+            query.setFilter("userId == :userId");
+            request.setAttribute("extra", extra);
+            map.put("userId", getUser());
         }
         
         l4j.debug("------ list begin --------");
@@ -187,16 +194,15 @@ public class RQuery extends RBase {
             return v;
         }
 
-        Date created = Calendar.getInstance(TimeZone.getDefault()).getTime();
-        SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
-
         if (name == null || "".equals(name)) {
+            Date created = Calendar.getInstance(TimeZone.getDefault()).getTime();
+            SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
             name = sf.format(created);
         }
 
         QueryStore qs = QueryStore.getInstance();
-
-        MQuery mquery = new MQuery(name, query, callback, "hadoop", "hadoop");
+        
+        MQuery mquery = new MQuery(name, query, callback, getUser(), "hadoop");
         qs.insertQuery(mquery);
 
         QueryManager.getInstance().submit(mquery);

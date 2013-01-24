@@ -7,14 +7,14 @@
 <form action="" method="post" class="form-horizontal">
 
     <div class="control-group">
-        <label class="control-label" for="fldquery">Query</label>
+        <label class="control-label" for="query">Query</label>
         <div class="controls">
             <textarea id="query" class="input-block-level" name="query" rows="10" cols="20" placeholder="Enter hive query">$!query</textarea>
         </div>
     </div>
 
     <div class="control-group">
-        <label class="control-label" for="fldquery">Query Name</label>
+        <label class="control-label" for="name">Query Name</label>
         <div class="controls">
             <input id="name" type="text" name="name" value="$!name" placeholder="Enter query name" />
         </div>

@@ -1,4 +1,9 @@
+
+#if($extra == 'my')
+#set($nav='query.my')
+#else
 #set($nav='query.list')
+#end
 
 #set($urlQuery = "")
 
@@ -11,7 +16,7 @@
 #end
 
 <div class="clearfix">
-<h2 class="pull-left">Queries</h2>
+<h2 class="pull-left">#if($extra == "my") My #end Queries</h2>
 
 <form class="form-search pull-right h2">
   <div class="input-append">

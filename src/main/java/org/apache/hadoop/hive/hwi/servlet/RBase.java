@@ -17,6 +17,7 @@ package org.apache.hadoop.hive.hwi.servlet;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import javax.ws.rs.core.Context;
 
 public abstract class RBase {
@@ -26,4 +27,18 @@ public abstract class RBase {
 
 	@Context
 	protected HttpServletResponse response;
+	
+	
+	protected void setUser(String user) {
+	    request.getSession().setAttribute("user", user);
+	}
+	
+	protected String getUser() {
+	    try {
+	        return request.getSession().getAttribute("user").toString();
+	    } catch (Exception e) {
+	        return null;
+	    }
+	}
+	
 }
