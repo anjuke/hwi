@@ -146,6 +146,8 @@
                     <attachClasses>true</attachClasses>
                     <archiveClasses>true</archiveClasses>
                     <packagingExcludes>WEB-INF/lib/*.jar</packagingExcludes>
+                    <!--
+                    -->
                 </configuration>
             </plugin>
 
@@ -169,6 +171,24 @@
                     </execution>
                 </executions>
             </plugin>
+
+            <plugin>
+                <groupId>com.mycila.maven-license-plugin</groupId>
+                <artifactId>maven-license-plugin</artifactId>
+                <configuration>
+                    <header>header.txt</header>
+                    <includes>
+                        <include>src/main/java/**</include>
+                    </includes>
+                    <excludes>
+                        <exclude>src/main/java/org/apache/hadoop/hive/hwi/HWIContextListener.java</exclude>
+                        <exclude>src/main/java/org/apache/hadoop/hive/hwi/HWIException.java</exclude>
+                        <exclude>src/main/java/org/apache/hadoop/hive/hwi/HWIServer.java</exclude>
+                        <exclude>src/main/java/org/apache/hadoop/hive/hwi/util/HWIHiveHistoryViewer.java</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+
 
 <!--
             <plugin>

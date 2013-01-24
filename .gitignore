@@ -1,4 +1,5 @@
 *.log
+*.out
 .classpath
 .project
 .settings/
