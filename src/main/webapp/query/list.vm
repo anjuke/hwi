@@ -44,7 +44,7 @@
     <tbody>
         #foreach($query in $pagination.getItems())
         <tr>
-            <td>$query.getId()</td>
+            <td><a href="/hwi/queries/$query.getId()">$query.getId()</a></td>
             <td><a href="/hwi/queries/$query.getId()">$query.getName()</a></td>
             <td>
                 #shortQuery($query.getQuery())
