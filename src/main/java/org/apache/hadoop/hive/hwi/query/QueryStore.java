@@ -127,12 +127,14 @@ public class QueryStore {
             tx.begin();
             getPM().makePersistent(mquery);
         } catch (Exception e) {
+            e.printStackTrace();
             return;
         }
     
         try {
             tx.commit();
         } catch (Exception e) {
+            e.printStackTrace();
             tx.rollback();
         }
     }

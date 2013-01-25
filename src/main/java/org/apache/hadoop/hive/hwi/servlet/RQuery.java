@@ -202,7 +202,14 @@ public class RQuery extends RBase {
 
         QueryStore qs = QueryStore.getInstance();
         
-        MQuery mquery = new MQuery(name, query, callback, getUser(), "hadoop");
+        String user = getUser();
+        if(user == null || "".equals(user)) {
+            user = "hadoop";
+        }
+        
+        l4j.debug("MQuery user " + user);
+        
+        MQuery mquery = new MQuery(name, query, callback, user, "hadoop");
         qs.insertQuery(mquery);
 
         QueryManager.getInstance().submit(mquery);

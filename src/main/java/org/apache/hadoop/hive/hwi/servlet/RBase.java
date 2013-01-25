@@ -42,6 +42,7 @@ public abstract class RBase {
 	protected void setUser(String user) {
 	    Cookie cookie = new Cookie(USER_COOKIE_NAME, user);
 	    cookie.setMaxAge(365 * 24 * 60 * 60);
+	    cookie.setPath("/hwi");
 	    response.addCookie(cookie);
 	}
 	
