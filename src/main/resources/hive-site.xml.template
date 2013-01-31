@@ -25,12 +25,12 @@
 
     <property>
         <name>fs.default.name</name>
-        <value>hdfs://host:port</value>
+        <value>hdfs://127.0.0.1:9000</value>
     </property>
 
     <property>
         <name>mapred.job.tracker</name>
-        <value>host:port</value>
+        <value>127.0.0.1:9001</value>
     </property>
 
     <property>

@@ -69,16 +69,6 @@ Following frameworks are used:
 cp src/main/resources/hive-site.xml.template src/main/resources/hive-site.xml
 vim src/main/resources/hive-site.xml
 
-<property>
-    <name>fs.default.name</name>
-    <value>hdfs://127.0.0.1:9000</value>
-</property>
-
-<property>
-    <name>mapred.job.tracker</name>
-    <value>127.0.0.1:9001</value>
-</property>
-
 cp src/main/resources/hive-site.xml {$HIVE_HOME}/conf/
 cp ~/.m2/repository/mysql/mysql-connector-java/5.1.22/mysql-connector-java-5.1.22.jar {$HIVE_HOME}/lib/
 ```
