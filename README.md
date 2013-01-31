@@ -76,7 +76,7 @@ vim src/main/resources/hive-site.xml
 
 <property>
     <name>mapred.job.tracker</name>
-    <value>hdfs://127.0.0.1:9001</value>
+    <value>127.0.0.1:9001</value>
 </property>
 
 cp src/main/resources/hive-site.xml {$HIVE_HOME}/conf/
@@ -101,5 +101,6 @@ cp ~/.m2/repository/mysql/mysql-connector-java/5.1.22/mysql-connector-java-5.1.2
 
 **run project**
 
-1. use TestRunHWIServer.java to run as java application
-2. you can open your browser, input "http://localhost:9999/hwi/"
+1. hadoop fs -mkdir /user/hive/result
+2. use TestRunHWIServer.java to run as java application
+3. you can open your browser, input "http://localhost:9999/hwi/"
