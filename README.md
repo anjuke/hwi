@@ -53,3 +53,50 @@ Following frameworks are used:
 **Run**
 
     $ hive --service hwi
+
+## Develop
+
+**Create Database**
+
+    $ create database hive
+    $ create user 'hive'@'localhost' identified by password 'hive'
+    $ grant all on hive.* to 'hive'@'localhost'
+    $ flush privileges
+
+**config file**
+
+```
+cp src/main/resources/hive-site.xml.template src/main/resources/hive-site.xml
+vim src/main/resources/hive-site.xml
+
+<property>
+    <name>fs.default.name</name>
+    <value>hdfs://127.0.0.1:9000</value>
+</property>
+
+<property>
+    <name>mapred.job.tracker</name>
+    <value>hdfs://127.0.0.1:9001</value>
+</property>
+```
+
+
+**Install DataNucleus**
+    
+* install url is `http://www.datanucleus.org/downloads/eclipse-update/`
+
+**Create Eclipse Configuration**
+
+    $ mvn eclipse:eclipse
+
+**Import Hwi Maven Project**
+
+1. eclipse import maven project
+2. please use java environment
+3. hwi project right click, DataNuclens => Add DataNuclens Support 
+4. hwi project right click, DataNuclens => Enable Auto-Enhancement
+
+**run project**
+
+1. use TestRunHWIServer.java to run as java application
+2. you can open your browser, input "http://localhost:9999/hwi/"
