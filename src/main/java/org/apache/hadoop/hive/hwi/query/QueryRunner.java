@@ -96,7 +96,8 @@ public class QueryRunner implements Job, Running {
      * run user input queries
      */
     public void runQuery() {
-        mquery.setResultLocation("/user/hive/result/" + mquery.getId() + "/");
+        String result = hiveConf.get("hive.hwi.result");
+        mquery.setResultLocation(result + "/" + mquery.getId() + "/");
         mquery.setStatus(Status.RUNNING);
         qs.updateQuery(mquery);
 

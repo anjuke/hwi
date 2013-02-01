@@ -38,5 +38,11 @@
         <value>/lib/hive-hwi-1.0.war</value>
         <description>This is the WAR file for Hive Web Interface</description>
     </property>
+    
+    <property>
+        <name>hive.hwi.result</name>
+        <value>/user/hive/result</value>
+        <description>this is storage directory for hive sql results</description>
+    </property>
 
 </configuration>
