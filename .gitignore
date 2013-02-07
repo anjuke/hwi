@@ -7,3 +7,4 @@ target/
 *.swp
 src/main/resources/hive-site.xml
 work/
+metastore_db/
