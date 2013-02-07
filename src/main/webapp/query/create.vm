@@ -4,7 +4,7 @@
 <h2>Create a Hive Query</h2>
 <hr class="bold">
         
-<form action="" method="post" class="form-horizontal">
+<form action="/hwi/queries/create/html" method="post" class="form-horizontal">
 
     <div class="control-group">
         <label class="control-label" for="query">Query</label>

@@ -38,6 +38,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.logging.Log;
@@ -54,6 +55,7 @@ import org.apache.hadoop.hive.ql.exec.Utilities;
 import org.apache.hadoop.hive.ql.session.SessionState;
 
 import com.sun.jersey.api.view.Viewable;
+import org.apache.hadoop.hive.hwi.util.APIResult; 
 
 @Path("/queries")
 public class RQuery extends RBase {
@@ -179,19 +181,34 @@ public class RQuery extends RBase {
         }
         return new Viewable("/query/create.vm");
     }
-
+    
+    /**
+     * 
+     * @param query
+     * @param name
+     * @param callback
+     * @param mode      "form" mean html, "api" mean interface
+     * @return
+     */
     @POST
-    @Path("create")
-    @Produces("text/html;charset=ISO-8859-1")
-    public Viewable create(@FormParam(value = "query") String query,
-            @FormParam(value = "name") String name,
-            @FormParam(value = "callback") String callback) {
+    @Path("create/{mode}")
+    @Produces({"text/html;charset=ISO-8859-1", MediaType.APPLICATION_JSON})
+    public Response create(@FormParam(value = "query") String query,
+            @FormParam(value = "name") String name, 
+            @FormParam(value = "callback") String callback, 
+            @PathParam("mode") String mode) { 
 
         Viewable v = new Viewable("/query/create.vm");
-
+        boolean is_api = mode.equals("api") ? true : false;
+        
         if (query == null || query.equals("")) {
-            request.setAttribute("msg", "query can't be empty");
-            return v;
+            if(is_api) {
+                APIResult ret = new APIResult(APIResult.ERR, "please input {query} parameter");
+                return Response.ok(ret.toJson(), MediaType.APPLICATION_JSON).build();
+            }else{
+                request.setAttribute("msg", "query can't be empty");
+                return Response.status(200).entity(v).build();
+            }
         }
 
         if (name == null || "".equals(name)) {
@@ -216,12 +233,18 @@ public class RQuery extends RBase {
         
         if (mquery == null || mquery.getId() == null) {
             request.setAttribute("msg", "save query failed");
-            return v;
+            return Response.status(200).entity(v).build();
         }
         
-        throw new WebApplicationException(Response.seeOther(
-                URI.create("queries/" + mquery.getId())).build());
+    	if(is_api) {
+            APIResult ret = new APIResult(APIResult.OK, "command has been submitted", mquery.getId() );
+            return Response.ok(ret.toJson(), MediaType.APPLICATION_JSON).build();
+    	}else {
+            throw new WebApplicationException(Response.seeOther(
+                    URI.create("queries/" + mquery.getId())).build());
+    	}
     }
+    
 
     @GET
     @Path("{id}/result")
@@ -305,4 +328,6 @@ public class RQuery extends RBase {
             return v;
         }
     }
-}
+    
+
+} 

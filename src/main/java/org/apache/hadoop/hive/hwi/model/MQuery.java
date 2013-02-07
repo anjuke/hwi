@@ -19,12 +19,20 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 
+import javax.jdo.annotations.IdGeneratorStrategy;
+import javax.jdo.annotations.PersistenceCapable;
+import javax.jdo.annotations.Persistent;
+import javax.jdo.annotations.PrimaryKey;
+
+@PersistenceCapable
 public class MQuery {
 
     public static enum Status {
         INITED, RUNNING, FINISHED, CANCELLED, FAILED, SYNTAXERROR
     };
 
+    @PrimaryKey
+    @Persistent(valueStrategy=IdGeneratorStrategy.IDENTITY)
     private Integer id;
 
     private String name;
