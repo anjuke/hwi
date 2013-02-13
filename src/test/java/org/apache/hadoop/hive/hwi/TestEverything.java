@@ -29,7 +29,42 @@ import org.apache.hadoop.hive.hwi.util.HadoopUtil;
 import org.apache.hadoop.hive.hwi.util.QueryUtil;
 import org.apache.hadoop.hive.ql.session.SessionState;
 
+import java.net.URI;
+
+import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.UriBuilder;
+import com.sun.jersey.api.client.Client;
+import com.sun.jersey.api.client.ClientResponse;
+import com.sun.jersey.api.client.WebResource;
+import com.sun.jersey.core.util.MultivaluedMapImpl;
+
 public class TestEverything {
+	
+    public static void testAPI() {
+        Client client = Client.create();
+		 
+        WebResource webResource = client .resource(getBaseURI());
+ 
+        MultivaluedMap<String,String> formData = new MultivaluedMapImpl();
+        formData.add("name", "wanghuida");
+        formData.add("query", "select count(1) from pokes");
+        formData.add("callback", "http://localhost/abc.php");
+        ClientResponse response = webResource.path("queries").path("create").path("api").accept("application/json")
+                   .post(ClientResponse.class, formData);
+ 
+        if (response.getStatus() != 200) {
+            throw new RuntimeException("Failed : HTTP error code : " + response.getStatus());
+        }
+ 
+        String output = response.getEntity(String.class);
+ 
+        System.out.println("Output from Server .... \n");
+        System.out.println(output);
+    }
+	
+    private static URI getBaseURI() {
+        return UriBuilder.fromUri("http://localhost:9999/hwi").build();
+    }
 
     public static void testHistoryFile() throws IOException {
         QueryUtil
@@ -188,6 +223,7 @@ public class TestEverything {
     }
 
     public static void main(String[] args) throws Exception {
-        testProp();
+        //testProp();
+        testAPI();
     }
 }
