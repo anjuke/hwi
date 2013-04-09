@@ -137,7 +137,7 @@
                     <verbose>true</verbose>
                     <fork>false</fork>
                     -->
-                    <metadataDirectory>src/main/java/org/apache/hadoop/hive/hwi/model</metadataDirectory>
+                    <metadataDirectory>src/main/resources/</metadataDirectory>
                 </configuration>
                 <executions>
                     <execution>
