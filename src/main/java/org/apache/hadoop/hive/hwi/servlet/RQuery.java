@@ -122,9 +122,9 @@ public class RQuery extends RBase {
             throw new WebApplicationException(404);
         
         
-        l4j.info("------ view info start ------");
-        l4j.info("query: " + query.getClass().getClassLoader().getClass().getName());
-        l4j.info("------ view info end   ------");
+        l4j.debug("------ view info start ------");
+        l4j.debug("query: " + query.getClass().getClassLoader().getClass().getName());
+        l4j.debug("------ view info end   ------");
 
         request.setAttribute("query", query);
 

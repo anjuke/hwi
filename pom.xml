@@ -229,6 +229,17 @@
 -->
 
         </plugins>
+
+        <resources>
+            <resource>
+                <directory>${basedir}/src/main/resources</directory>
+                <filtering>true</filtering>
+                <excludes>
+                    <exclude>hive-site.xml</exclude>
+                </excludes>
+            </resource>
+        </resources>
+
     </build>
 
 </project>
