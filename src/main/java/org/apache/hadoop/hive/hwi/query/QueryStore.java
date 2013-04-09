@@ -125,10 +125,15 @@ public class QueryStore {
         
         try {
             tx.begin();
-            getPM().makePersistent(mquery);
         } catch (Exception e) {
             e.printStackTrace();
             return;
+        }
+        
+        try {
+            getPM().makePersistent(mquery);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     
         try {
@@ -146,21 +151,26 @@ public class QueryStore {
     public void copyAndUpdateQuery(MQuery mquery) {
             
         try {
-            l4j.info("mquery classloader " + mquery.getClass().getClassLoader());
+            l4j.debug("mquery classloader " + mquery.getClass().getClassLoader());
             
             Transaction tx = getPM().currentTransaction();
             MQuery query = getPM().getObjectById(MQuery.class, mquery.getId());
             
-            l4j.info("query classloader " + query.getClass().getClassLoader());
+            l4j.debug("query classloader " + query.getClass().getClassLoader());
             
             query.copy(mquery);
             
             try {
                 tx.begin();
-                getPM().makePersistent(query);
             } catch (Exception e) {
                 e.printStackTrace();
                 return;
+            }
+            
+            try {
+                getPM().makePersistent(query);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
             
             try {
@@ -178,14 +188,21 @@ public class QueryStore {
         try {
             tx = getPM().currentTransaction();
             tx.begin();
-            getPM().makePersistent(mquery);
-            try {
-                tx.commit();
-            } catch (Exception e) {
-                tx.rollback();
-            }
         } catch (Exception e) {
             e.printStackTrace();
+            return ;
+        }
+        
+        try {
+            getPM().makePersistent(mquery);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
+        try {
+            tx.commit();
+        } catch (Exception e) {
+            tx.rollback();
         }
     }
 
@@ -218,14 +235,14 @@ public class QueryStore {
         
         Object obj = query.execute(queryId);
         
-        l4j.info("---- getById start ----");
+        l4j.debug("---- getById start ----");
         
-        l4j.info("object class loader: " + obj.getClass().getClassLoader());
-        l4j.info("Query  class loader:" + Query.class.getClassLoader());
-        l4j.info("query  class loader:" + query.getClass().getClassLoader());
-        l4j.info("MQuery class loader: " + MQuery.class.getClassLoader());
+        l4j.debug("object class loader: " + obj.getClass().getClassLoader());
+        l4j.debug("Query  class loader:" + Query.class.getClassLoader());
+        l4j.debug("query  class loader:" + query.getClass().getClassLoader());
+        l4j.debug("MQuery class loader: " + MQuery.class.getClassLoader());
         
-        l4j.info("---- getById   end ----");
+        l4j.debug("---- getById   end ----");
         
         return (MQuery) obj;
     }
@@ -236,10 +253,15 @@ public class QueryStore {
         
         try {
             tx.begin();
-            getPM().makePersistent(crontab);
         } catch (Exception e) {
             e.printStackTrace();
             return;
+        }
+        
+        try {
+            getPM().makePersistent(crontab);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         
         try {
@@ -284,10 +306,15 @@ public class QueryStore {
         
         try {
             tx.begin();
-            getPM().makePersistent(crontab);
         } catch (Exception e) {
             e.printStackTrace();
             return;
+        }
+        
+        try {
+            getPM().makePersistent(crontab);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         
         try {

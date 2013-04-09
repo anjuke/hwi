@@ -17,19 +17,40 @@
             Systax
             <hr>
             <p>For convenience, Some variables are available:</p>
-            <code>${esc.d}{hiveconf:year}</code>
-            <code>${esc.d}{hiveconf:month}</code>
-            <code>${esc.d}{hiveconf:day}</code>
-            <code>${esc.d}{hiveconf:hour}</code>
-            <code>${esc.d}{hiveconf:minute}</code>
-            <code>${esc.d}{hiveconf:second}</code>
+            <ul>
+            <li><code>${esc.d}{hiveconf:year}</code></li>
+            <li><code>${esc.d}{hiveconf:month}</code></li>
+            <li><code>${esc.d}{hiveconf:day}</code></li>
+            <li><code>${esc.d}{hiveconf:hour}</code></li>
+            <li><code>${esc.d}{hiveconf:minute}</code></li>
+            <li><code>${esc.d}{hiveconf:second}</code></li>
+            </ul>
+            Use <code>set date=*days</code> to change date.
             <hr/>
             Examples
-            <hr/>
+            <hr />
             <p>Suppose at 2012-01-01 12:00:00, the following query was run</p>
-            <pre><code>select ${esc.d}{hiveconf:hour} from alog.d_${esc.d}{hiveconf:year}${esc.d}{hiveconf:month}${esc.d}{hiveconf:day} limit 1</code></pre>
+            
+            <code>
+            select ${esc.d}{hiveconf:hour} from alog.d_${esc.d}{hiveconf:year}${esc.d}{hiveconf:month}${esc.d}{hiveconf:day} limit 1
+            </code>
+            
             <p>then it will be processed as </p>
-            <pre><code>select 12 from alog.d_20120101 limit 1</code></pre>
+            
+            <code>select 12 from alog.d_20120101 limit 1</code>
+            
+            
+            <hr />
+            <p>Suppose at 2012-01-02 12:00:00, the following query was run</p>
+            
+            <code>
+            set date=-1day;
+            select ${esc.d}{hiveconf:hour} from alog.d_${esc.d}{hiveconf:year}${esc.d}{hiveconf:month}${esc.d}{hiveconf:day} limit 1
+            </code>
+            
+            <p>then it will be processed as </p>
+            <code>select 12 from alog.d_20120101 limit 1</code>
+            
             <a href="http://hive.apache.org/docs/r0.9.0/language_manual/var_substitution.html" target="_blank">More</a>
             </div>
         </div>
