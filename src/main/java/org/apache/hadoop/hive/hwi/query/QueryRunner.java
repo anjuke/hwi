@@ -187,6 +187,7 @@ public class QueryRunner implements Job, Running {
                 e.printStackTrace();
                 return null;
             } finally {
+            	CommandProcessorFactory.clean((HiveConf) hiveConf);
                 qp.close();
             }
         } else {
@@ -194,6 +195,8 @@ public class QueryRunner implements Job, Running {
                 resp = proc.run(cmd.substring(tokens[0].length()).trim());
             } catch (CommandNeedRetryException e) {
                 throw e;
+            }finally{
+            	CommandProcessorFactory.clean((HiveConf) hiveConf);
             }
         }
 
