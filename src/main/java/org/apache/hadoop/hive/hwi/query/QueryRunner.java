@@ -21,7 +21,10 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -129,36 +132,62 @@ public class QueryRunner implements Job, Running {
         // query is not safe ! safe it !
         String safeQuery = QueryUtil.getSafeQuery(query.getQuery());
         
+        // set map reduce job name
         cmds.add("set mapred.job.name=HWI Query #" + query.getId() + " (" + query.getName() + ")");
-
-        if (safeQuery.contains("hiveconf")) {
-            Date d = new Date();
-            SimpleDateFormat ft = new SimpleDateFormat("yyyy");
-            cmds.add("set year=" + ft.format(d));
-            ft = new SimpleDateFormat("MM");
-            cmds.add("set month=" + ft.format(d));
-            ft = new SimpleDateFormat("dd");
-            cmds.add("set day=" + ft.format(d));
-            ft = new SimpleDateFormat("HH");
-            cmds.add("set hour=" + ft.format(d));
-            ft = new SimpleDateFormat("mm");
-            cmds.add("set minute=" + ft.format(d));
-            ft = new SimpleDateFormat("ss");
-            cmds.add("set second=" + ft.format(d));
-        }
-
+        
+        // check user date settings
+        Pattern setTimePattern = Pattern.compile(
+                "set(\\s+)date(\\s)*=(\\s)*(\\+|\\-)?\\s*(\\d+)\\s*(day|hour)(s?)", 
+                Pattern.CASE_INSENSITIVE);
+        String timeDiffUnit = null;
+        int timeDiffValue = 0;
+        
         for (String cmd : safeQuery.split(";")) {
             cmd = cmd.trim();
-            if (cmd.equals(""))
+            if (cmd.equals("")) {
                 continue;
-
-            if ("select".equalsIgnoreCase(cmd.split("\\s+")[0])) {
+            }
+            
+            String prefix = cmd.split("\\s+")[0];
+            if ("select".equalsIgnoreCase(prefix)) {
                 cmd = "INSERT OVERWRITE DIRECTORY '" + resultLocation + "' "
                         + cmd;
+            } else if ("set".equalsIgnoreCase(prefix)) {
+                Matcher m = setTimePattern.matcher(cmd);
+                if (m.matches()) {
+                    if (m.group(4) != null && !"".equals(m.group(4))) {
+                        timeDiffValue = Integer.parseInt(m.group(4) + m.group(5));
+                    } else {
+                        timeDiffValue = Integer.parseInt(m.group(5));
+                    }
+                    
+                    timeDiffUnit = m.group(6);
+                }
             }
-
+            
             cmds.add(cmd);
         }
+        
+        if (safeQuery.contains("hiveconf")) {
+            
+            Calendar gc = Calendar.getInstance();
+            if ("day".equalsIgnoreCase(timeDiffUnit)) {
+                gc.add(Calendar.DATE, timeDiffValue);
+            } else if("hour".equalsIgnoreCase(timeDiffUnit)) {
+                gc.add(Calendar.HOUR, timeDiffValue);
+            }
+            
+            SimpleDateFormat ft = new SimpleDateFormat("yyyyMMddHHmmss");
+            String dateStr = ft.format(gc.getTime());
+            
+            cmds.add(0, "set year=" + dateStr.substring(0, 4));
+            cmds.add(0, "set month=" + dateStr.substring(4, 6));
+            cmds.add(0, "set day=" + dateStr.substring(6, 8));
+            cmds.add(0, "set hour=" + dateStr.substring(8, 10));
+            cmds.add(0, "set minute=" + dateStr.substring(10, 12));
+            cmds.add(0, "set second=" + dateStr.substring(12, 14));
+        }
+
 
         return cmds;
     }
