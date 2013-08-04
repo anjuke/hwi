@@ -297,6 +297,7 @@ public class RQuery extends RBase {
                                 "attachment; filename=hwi_result_" + id
                                         + ".txt");
                         response.addHeader("Content-Type", "text/plain");
+                        response.setCharacterEncoding("utf-8");
                         PrintWriter writer = response.getWriter();
                         while ((temp = bf.readLine()) != null) {
                             writer.println(temp.replace('\1', '\t'));
