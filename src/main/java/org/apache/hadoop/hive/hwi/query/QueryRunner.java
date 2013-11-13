@@ -21,6 +21,7 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.regex.Matcher;
@@ -62,7 +63,7 @@ public class QueryRunner implements Job, Running {
     
     private String resultDir;
     
-    private String initHQL;
+    private String[] initHQLs = null;
 
     @Override
     public void execute(JobExecutionContext context)
@@ -97,7 +98,10 @@ public class QueryRunner implements Job, Running {
         }
         
         resultDir = hiveConf.get("hive.hwi.result", "/user/hive/result");
-        initHQL = hiveConf.get("hive.hwi.inithql", "");
+        String initHQL = hiveConf.get("hive.hwi.inithqls", "");
+        if (!"".equals(initHQL)) {
+            initHQLs = initHQL.split(";");
+        }
 
         return true;
     }
@@ -115,6 +119,11 @@ public class QueryRunner implements Job, Running {
         long start_time = System.currentTimeMillis();
         for (String cmd : cmds) {
             try {
+                cmd = cmd.trim();
+                if (cmd.equals("")) {
+                    continue;
+                }
+                
                 CommandProcessorResponse resp = runCmd(cmd);
                 mquery.setErrorMsg(resp.getErrorMessage());
                 mquery.setErrorCode(resp.getResponseCode());
@@ -141,8 +150,8 @@ public class QueryRunner implements Job, Running {
         // set map reduce job name
         cmds.add("set mapred.job.name=HWI Query #" + query.getId() + " (" + query.getName() + ")");
         
-        if (!"".equals(initHQL)) {
-            cmds.add(initHQL);
+        if (initHQLs.length > 0) {
+            cmds.addAll(Arrays.asList(initHQLs));
         }
         
         // check user date settings
