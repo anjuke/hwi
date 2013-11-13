@@ -59,6 +59,10 @@ public class QueryRunner implements Job, Running {
     private QueryStore qs;
 
     private String historyFile;
+    
+    private String resultDir;
+    
+    private String initHQL;
 
     @Override
     public void execute(JobExecutionContext context)
@@ -91,6 +95,9 @@ public class QueryRunner implements Job, Running {
             l4j.error("MQuery<" + mqueryId + "> is missing");
             return false;
         }
+        
+        resultDir = hiveConf.get("hive.hwi.result", "/user/hive/result");
+        initHQL = hiveConf.get("hive.hwi.inithql", "");
 
         return true;
     }
@@ -99,8 +106,7 @@ public class QueryRunner implements Job, Running {
      * run user input queries
      */
     public void runQuery() {
-        String result = hiveConf.get("hive.hwi.result", "/user/hive/result");
-        mquery.setResultLocation(result + "/" + mquery.getId() + "/");
+        mquery.setResultLocation(resultDir + "/" + mquery.getId() + "/");
         mquery.setStatus(Status.RUNNING);
         qs.updateQuery(mquery);
 
@@ -134,6 +140,10 @@ public class QueryRunner implements Job, Running {
         
         // set map reduce job name
         cmds.add("set mapred.job.name=HWI Query #" + query.getId() + " (" + query.getName() + ")");
+        
+        if (!"".equals(initHQL)) {
+            cmds.add(initHQL);
+        }
         
         // check user date settings
         Pattern setTimePattern = Pattern.compile(
