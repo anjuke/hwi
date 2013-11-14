@@ -18,13 +18,54 @@
 <div class="pagination">
     <ul>
         <li><span>$pagination.getTotal()</span></li>
-        #set($pages=$pagination.getPages())
-        #if($pages > 0)
-        #foreach( $page in [1..$pages] )
-        <li class="#if($page==$pagination.getPage())active#end">
-            <a href="?#if($!urlQuery != '')$urlQuery&#{end}page=$page&pageSize=$pagination.getPageSize()">$page</a>
-        </li>
+        #set($totalPages = $pagination.getPages())
+        
+        #if($totalPages > 0)
+        
+        #if($pagination.getPage() >= 1 && $pagination.getPage() <= $totalPages)
+            #set($currPage = $pagination.getPage())
+        #else
+            #set($currPage = 1)
         #end
+        
+        #set($pageSize = $pagination.getPageSize())
+        
+        #set($beginPage=1)
+        #set($endPage=$totalPages)
+        
+        #if($totalPages > 10)
+            #if($currPage >= 5)
+                #if($currPage + 5 > $totalPages)
+                    #set($beginPage = $totalPages - 9)
+                #else
+                    #set($beginPage = $currPage - 4)
+                    #set($endPage = $currPage + 5)
+                #end
+            #else
+                #set($endPage=10)
+            #end
+        #end
+        
+        #if($beginPage > 1)
+            #set($page = $beginPage - 1)
+            <li>
+                <a href="?#if($!urlQuery != '')$urlQuery&#{end}page=$page&pageSize=$pageSize">Prev</a>
+            </li>
+        #end
+        
+        #foreach( $page in [$beginPage..$endPage] )
+            <li class="#if($page==$currPage)active#end">
+                <a href="?#if($!urlQuery != '')$urlQuery&#{end}page=$page&pageSize=$pageSize">$page</a>
+            </li>
+        #end
+        
+        #if($endPage < $totalPages)
+            #set($page = $endPage + 1)
+            <li>
+                <a href="?#if($!urlQuery != '')$urlQuery&#{end}page=$page&pageSize=$pageSize">Next</a>
+            </li>
+        #end
+        
         #end
     </ul>
 </div>

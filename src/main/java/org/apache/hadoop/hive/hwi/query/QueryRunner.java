@@ -21,6 +21,7 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.regex.Matcher;
@@ -59,6 +60,10 @@ public class QueryRunner implements Job, Running {
     private QueryStore qs;
 
     private String historyFile;
+    
+    private String resultDir;
+    
+    private String[] initHQLs = null;
 
     @Override
     public void execute(JobExecutionContext context)
@@ -91,6 +96,12 @@ public class QueryRunner implements Job, Running {
             l4j.error("MQuery<" + mqueryId + "> is missing");
             return false;
         }
+        
+        resultDir = hiveConf.get("hive.hwi.result", "/user/hive/result");
+        String initHQL = hiveConf.get("hive.hwi.inithqls", "");
+        if (!"".equals(initHQL)) {
+            initHQLs = initHQL.split(";");
+        }
 
         return true;
     }
@@ -99,8 +110,7 @@ public class QueryRunner implements Job, Running {
      * run user input queries
      */
     public void runQuery() {
-        String result = hiveConf.get("hive.hwi.result", "/user/hive/result");
-        mquery.setResultLocation(result + "/" + mquery.getId() + "/");
+        mquery.setResultLocation(resultDir + "/" + mquery.getId() + "/");
         mquery.setStatus(Status.RUNNING);
         qs.updateQuery(mquery);
 
@@ -109,6 +119,11 @@ public class QueryRunner implements Job, Running {
         long start_time = System.currentTimeMillis();
         for (String cmd : cmds) {
             try {
+                cmd = cmd.trim();
+                if (cmd.equals("")) {
+                    continue;
+                }
+                
                 CommandProcessorResponse resp = runCmd(cmd);
                 mquery.setErrorMsg(resp.getErrorMessage());
                 mquery.setErrorCode(resp.getResponseCode());
@@ -134,6 +149,10 @@ public class QueryRunner implements Job, Running {
         
         // set map reduce job name
         cmds.add("set mapred.job.name=HWI Query #" + query.getId() + " (" + query.getName() + ")");
+        
+        if (initHQLs.length > 0) {
+            cmds.addAll(Arrays.asList(initHQLs));
+        }
         
         // check user date settings
         Pattern setTimePattern = Pattern.compile(

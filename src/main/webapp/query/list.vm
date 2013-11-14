@@ -12,7 +12,17 @@
 #end
 
 #if($queryName)
+    #if($urlQuery != '')
+        #set($urlQuery = $urlQuery + "&")
+    #end
     #set($urlQuery = $urlQuery + "queryName=$queryName")
+#end
+
+#if($extra)
+    #if($urlQuery != '')
+        #set($urlQuery = $urlQuery + "&")
+    #end
+    #set($urlQuery = $urlQuery + "extra=$extra")
 #end
 
 <div class="clearfix">
