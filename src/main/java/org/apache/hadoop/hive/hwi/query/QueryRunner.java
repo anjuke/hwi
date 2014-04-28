@@ -150,7 +150,7 @@ public class QueryRunner implements Job, Running {
         // set map reduce job name
         cmds.add("set mapred.job.name=HWI Query #" + query.getId() + " (" + query.getName() + ")");
         
-        if (initHQLs.length > 0) {
+        if (initHQLs != null && initHQLs.length > 0) {
             cmds.addAll(Arrays.asList(initHQLs));
         }
         
